@@ -1,4 +1,278 @@
-﻿* {
+﻿@import url('https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&display=swap');
+
+:root {
+    --primary: #002D71;
+    --secondary: #E86F47;
+    --dark: #333;
+    --light: #ececec;
+}
+
+* {
     margin: 0;
     padding: 0;
+    border: none;
+    text-decoration: none;
+    color: var(--dark);
+    outline: none;
+    font-family: 'Lexend', sans-serif;
+}
+
+button {
+    font-weight: 500;
+    padding: 7px 20px 7px 20px;
+    border-radius: 5px;
+    background: var(--light);
+    cursor: pointer;
+}
+
+button.filled {
+    background: var(--primary);
+    color: white;
+}
+
+.high-title {
+    font-weight: 600;
+    color: var(--primary);
+    font-size: 1.6rem;
+    border-bottom: 3px solid var(--secondary);
+}
+
+body {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.container {
+    width: 80vw;
+}
+
+header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    width: 100vw;
+    box-sizing: border-box;
+    top: 0;
+    padding: 0 10vw 0 10vw;
+    height: 10vh;
+    background: white;
+    position: fixed;
+}
+
+header .logo {
+    font-weight: 700;
+    font-size: 2.5rem;
+}
+
+header .logo .first {
+    color: var(--primary);
+}
+
+header .logo .second {
+    color: var(--secondary);
+}
+
+header .menu {
+    font-weight: 500;
+    font-size: 1.2rem;
+}
+
+header .menu a {
+    margin-left: 1rem;
+}
+
+#home {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    padding: 10vh 0 10vh 0;
+}
+
+#home .big-logo {
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+#home .big-logo img{
+    width: 75%;
+}
+
+#home .motivation {
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+}
+
+#home .motivation .catch-title {
+    font-weight: 600;
+    font-size: 2rem;
+    color: var(--primary);
+}
+
+#home .motivation .catch-sub {
+    font-weight: 600;
+    font-size: 2rem;
+    color: var(--secondary);
+    margin-bottom: 1rem;
+}
+
+#home .motivation .catch-text {
+    font-size: 1.1rem;
+}
+
+#home .motivation .motivation-buttons {
+    margin-top: 2rem;
+}
+
+#home .motivation button {
+    margin-right: 1rem;
+}
+
+#about {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 10vh 0 10vh 0;
+    text-align: center;
+}
+
+#about .high-title {
+    margin-bottom: 1rem;
+}
+
+#about .mini-logo {
+    font-weight: 500;
+    color: var(--primary);
+}
+
+#about .about-illust {
+    margin-top: 2rem;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+}
+
+#about .about-illust section {
+    width: 20%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+#about .illust-step {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-weight: 700;
+    color: var(--primary);
+    background: var(--light);
+    height: 100px;
+    width: 100px;
+    font-size: 2rem;
+    border-radius: 50px;
+}
+
+#about .illust-title {
+    color: var(--primary);
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    font-weight: 600;
+}
+
+#about .illust-info {
+    text-align: center;
+}
+
+#api {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    padding: 10vh 0 10vh 0;
+}
+
+#api .description {
+    width: 75%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    justify-content: center;
+    text-align: right;
+}
+
+#api .desc-title {
+    font-weight: 600;
+    font-size: 2rem;
+    color: var(--primary);
+}
+
+#api .desc-sub {
+    font-weight: 600;
+    font-size: 2rem;
+    color: var(--secondary);
+    margin-bottom: 1rem;
+}
+
+#api .desc-text {
+    font-size: 1.1rem;
+}
+
+#api .secret {
+    font-weight: 500;
+    color: var(--secondary);
+}
+
+#api .desc-buttons {
+    margin-top: 2rem;
+}
+
+#api .desc-buttons button {
+    margin-left: 1rem;
+}
+
+#api .api-logo {
+    width: 25%;
+}
+
+#api .api-logo img {
+    width: 100%;
+}
+
+#api .desc-code {
+    background: var(--light);
+    width: 100%;
+    text-align: left;
+    margin-top: 1rem;
+    padding: 0.5rem;
+    border-radius: 10px;
+}
+
+#api .desc-code pre {
+    font-weight: 500;
+    border: none;
+}
+
+footer {
+    width: 100%;
+    background: var(--light);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 1rem;
+    box-sizing: border-box;
 }

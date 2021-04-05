@@ -7,7 +7,7 @@ namespace CtoxWebApp.Controllers
         // GET
         public IActionResult Index()
         {
-            return View();
+            return View("landing");
         }
     }
 }
