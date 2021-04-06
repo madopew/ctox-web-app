@@ -1,0 +1,12 @@
+﻿@model CtoxWebApp.Models.UserLogin;
+
+@{
+    Layout = "_Auth";
+    ViewData["title"] = "Login";
+}
+
+@using (Html.BeginForm("Login", "Auth", FormMethod.Post))
+{
+    @Html.EditorForModel()
+    <input type="submit" class="filled" value="Sign in"/>
+}

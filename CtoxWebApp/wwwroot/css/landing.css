@@ -1,36 +1,4 @@
-﻿@import url('https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&display=swap');
-
-:root {
-    --primary: #002D71;
-    --secondary: #E86F47;
-    --dark: #333;
-    --light: #ececec;
-}
-
-* {
-    margin: 0;
-    padding: 0;
-    border: none;
-    text-decoration: none;
-    color: var(--dark);
-    outline: none;
-    font-family: 'Lexend', sans-serif;
-}
-
-button {
-    font-weight: 500;
-    padding: 7px 20px 7px 20px;
-    border-radius: 5px;
-    background: var(--light);
-    cursor: pointer;
-}
-
-button.filled {
-    background: var(--primary);
-    color: white;
-}
-
-.high-title {
+﻿.high-title {
     font-weight: 600;
     color: var(--primary);
     font-size: 1.6rem;

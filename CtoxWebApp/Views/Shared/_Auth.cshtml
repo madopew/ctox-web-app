@@ -1,0 +1,23 @@
+﻿<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Ctox - @ViewData["title"]</title>
+    <link rel="stylesheet" href="~/css/style.css" >
+    <link rel="stylesheet" href="~/css/auth.css" >
+</head>
+<body>
+@if (ViewData["error-message"] != null)
+{
+    <div class="error-message">
+        <span>@ViewData["error-message"]</span>
+    </div>
+}
+<div class="container">
+    <div class="illust"><img src="~/res/auth_left.png" alt="Illustration"></div>
+    <div class="auth-main">@RenderBody()</div>
+</div>
+</body>
+</html>
