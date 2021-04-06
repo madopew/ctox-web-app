@@ -75,3 +75,8 @@ input[type="submit"] {
     width: 30%;
 }
 
+.different-page a {
+    color: var(--secondary);
+    font-weight: 500;
+}
+

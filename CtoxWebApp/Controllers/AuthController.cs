@@ -32,7 +32,8 @@ namespace CtoxWebApp.Controllers
             
             var result = context.Users
                 .FirstOrDefault(u => u.Username.Equals(user.Username, StringComparison.Ordinal) &&
-                                     u.PasswordHash.Equals(hash, StringComparison.Ordinal));
+                                     u.PasswordHash.Equals(hash, StringComparison.Ordinal) &&
+                                     u.Confirmed);
 
             if (result is null)
             {
