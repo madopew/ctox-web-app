@@ -6,6 +6,9 @@
 # Migrations
 Migrations/
 
+# Useless
+.idea/
+
 # Sensitive
 appsettings.*
 

@@ -9,6 +9,7 @@ namespace CtoxWebApp.Models
     public enum Role
     {
         User,
+        Premium,
         Moderator,
     }
 

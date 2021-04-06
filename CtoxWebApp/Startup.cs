@@ -1,3 +1,4 @@
+using CtoxWebApp.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -22,6 +23,8 @@ namespace CtoxWebApp
         {
             var appContextConnection = Configuration.GetConnectionString("AppContext");
 
+            services.AddSingleton<HashService>();
+
             services
                 .AddControllersWithViews()
                 .AddRazorRuntimeCompilation();
@@ -39,19 +42,22 @@ namespace CtoxWebApp
             else
             {
                 app.UseExceptionHandler("/Home/Error");
+                app.UseHsts();
             }
+            
             app.UseHttpsRedirection();
+
+            app.UseDefaultFiles();
+            
             app.UseStaticFiles();
-
+            
             app.UseRouting();
-
-            app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(
                     "default",
-                    "{controller=Home}/{action=Index}");
+                    "{controller}/{action}");
             });
         }
     }
