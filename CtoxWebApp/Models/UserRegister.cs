@@ -1,6 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using CtoxWebApp.Attributes.Validations;
-using Microsoft.AspNetCore.Mvc;
 
 namespace CtoxWebApp.Models
 {

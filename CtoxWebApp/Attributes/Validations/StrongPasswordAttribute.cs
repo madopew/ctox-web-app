@@ -1,4 +1,5 @@
-﻿using System;
+﻿#nullable enable
+using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace CtoxWebApp.Attributes.Validations
@@ -30,6 +31,11 @@ namespace CtoxWebApp.Attributes.Validations
             }
 
             var vs = value.ToString();
+            if (vs is null)
+            {
+                return false;
+            }
+
             return (Score(vs) & props) == props;
         }
 
@@ -59,7 +65,6 @@ namespace CtoxWebApp.Attributes.Validations
                 if (!result.HasFlag(PasswordHas.Special) && char.IsSymbol(c))
                 {
                     result |= PasswordHas.Special;
-                    continue;
                 }
             }
 
