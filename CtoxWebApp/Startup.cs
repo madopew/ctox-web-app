@@ -1,3 +1,4 @@
+using CtoxWebApp.DAL;
 using CtoxWebApp.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -5,7 +6,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.EntityFrameworkCore;
-using AppContext = CtoxWebApp.DAL.AppContext;
 
 namespace CtoxWebApp
 {
@@ -29,7 +29,7 @@ namespace CtoxWebApp
                 .AddControllersWithViews()
                 .AddRazorRuntimeCompilation();
                 
-            services.AddDbContextPool<AppContext>(options => options.UseMySql(appContextConnection, ServerVersion.AutoDetect(appContextConnection)));
+            services.AddDbContextPool<AppDbContext>(options => options.UseMySql(appContextConnection, ServerVersion.AutoDetect(appContextConnection)));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -55,9 +55,7 @@ namespace CtoxWebApp
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapControllerRoute(
-                    "default",
-                    "{controller}/{action}");
+                endpoints.MapControllers();
             });
         }
     }

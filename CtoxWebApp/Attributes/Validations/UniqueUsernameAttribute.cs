@@ -1,8 +1,8 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using CtoxWebApp.DAL;
 using Microsoft.Extensions.DependencyInjection;
-using AppContext = CtoxWebApp.DAL.AppContext;
 
 namespace CtoxWebApp.Attributes.Validations
 {
@@ -15,7 +15,7 @@ namespace CtoxWebApp.Attributes.Validations
                 return new ValidationResult(null);
             }
 
-            var context = validationContext.GetService<AppContext>();
+            var context = validationContext.GetService<AppDbContext>();
             var vs = value.ToString();
 
             if (context?.Users.FirstOrDefault(u => u.Username.Equals(vs, StringComparison.Ordinal)) != null)

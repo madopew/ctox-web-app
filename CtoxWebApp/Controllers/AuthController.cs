@@ -2,22 +2,22 @@
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
+using CtoxWebApp.DAL;
 using CtoxWebApp.Models;
 using CtoxWebApp.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using AppContext = CtoxWebApp.DAL.AppContext;
 
 namespace CtoxWebApp.Controllers
 {
     public class AuthController : Controller
     {
-        private readonly AppContext context;
+        private readonly AppDbContext dbContext;
         private readonly HashService hashService;
         
-        public AuthController(AppContext context, HashService hashService)
+        public AuthController(AppDbContext dbContext, HashService hashService)
         {
-            this.context = context;
+            this.dbContext = dbContext;
             this.hashService = hashService;
         }
 
@@ -38,7 +38,7 @@ namespace CtoxWebApp.Controllers
 
             var hash = hashService.GetHash(string.Concat(user.Username, hashService.GetHash(user.Password)));
             
-            var result = context.Users
+            var result = dbContext.Users
                 .FirstOrDefault(u => u.Username.Equals(user.Username, StringComparison.Ordinal) &&
                                      u.PasswordHash.Equals(hash, StringComparison.Ordinal));
 
@@ -77,11 +77,11 @@ namespace CtoxWebApp.Controllers
                     PasswordHash =
                         hashService.GetHash(string.Concat(user.Username, hashService.GetHash(user.Password))),
                     Confirmed = false,
-                    Role = Role.User,
+                    RoleId = 1,
                 };
 
-                context.Users.Add(registered);
-                context.SaveChanges();
+                dbContext.Users.Add(registered);
+                dbContext.SaveChanges();
                 return Redirect("Login");
             }
             
