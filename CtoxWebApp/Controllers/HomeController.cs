@@ -10,5 +10,11 @@ namespace CtoxWebApp.Controllers
         {
             return Content("Hello world!");
         }
+
+        [Authorize(Roles = "Super, Admin")]
+        public IActionResult About()
+        {
+            return Content("No user");
+        }
     }
 }
