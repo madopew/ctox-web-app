@@ -6,13 +6,6 @@ using System.Threading.Tasks;
 
 namespace CtoxWebApp.Models
 {
-    public enum Role
-    {
-        User,
-        Premium,
-        Moderator,
-    }
-
     public class User
     {
         public int Id { get; set; }
@@ -20,6 +13,7 @@ namespace CtoxWebApp.Models
         public string Email { get; set; }
         public string PasswordHash { get; set; }
         public bool Confirmed { get; set; }
-        public Role Role { get; set; }
+        public int? RoleId { get; set; }
+        public virtual Role Role { get; set; }
     }
 }
