@@ -1,17 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.Entity;
 using System.Linq;
 using System.Security.Claims;
-using System.Security.Cryptography;
-using System.Text;
 using System.Threading.Tasks;
 using CtoxWebApp.DAL;
 using CtoxWebApp.Models;
 using CtoxWebApp.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CtoxWebApp.Controllers
@@ -80,27 +76,30 @@ namespace CtoxWebApp.Controllers
         }
 
         [HttpPost]
-        public IActionResult Register(UserRegister user)
+        public async Task<IActionResult> Register(UserRegister user)
         {
-            if (ModelState.IsValid)
-            {
-                var role = dbContext.Roles.First(r => r.Name == "User");
-                var registered = new User
-                {
-                    Username = user.Username,
-                    Email = user.Email,
-                    PasswordHash =
-                        hashService.GetHash(string.Concat(user.Username, hashService.GetHash(user.Password))),
-                    Confirmed = false,
-                    Role = role,
-                };
-
-                dbContext.Users.Add(registered);
-                dbContext.SaveChanges();
-                return Redirect("Login");
-            }
+            if (!ModelState.IsValid) return View(user);
             
-            return View(user);
+            var role = dbContext.Roles.First(r => r.Name == "User");
+            var registered = new User
+            {
+                Username = user.Username,
+                Email = user.Email,
+                PasswordHash =
+                    hashService.GetHash(string.Concat(user.Username, hashService.GetHash(user.Password))),
+                Confirmed = false,
+                Role = role,
+            };
+
+            dbContext.Users.Add(registered);
+            await dbContext.SaveChangesAsync();
+
+            if (User.Identity.IsAuthenticated)
+            {
+                await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            }
+
+            return Redirect("Login");
         }
 
         public async Task<IActionResult> Logout()
