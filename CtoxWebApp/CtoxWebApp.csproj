@@ -28,7 +28,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Views\Home" />
+    <Folder Include="wwwroot\lib" />
     <Folder Include="wwwroot\res" />
   </ItemGroup>
 

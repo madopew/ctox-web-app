@@ -8,7 +8,7 @@ namespace CtoxWebApp.Controllers
     {
         public IActionResult Index()
         {
-            return Content("Hello authorized!");
+            return View();
         }
     }
 }
