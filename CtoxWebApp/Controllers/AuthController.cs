@@ -9,6 +9,7 @@ using CtoxWebApp.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace CtoxWebApp.Controllers
 {
@@ -99,17 +100,46 @@ namespace CtoxWebApp.Controllers
                 await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             }
 
+            await SendVerification(registered);
+
             return Redirect("Login");
         }
 
-        public IActionResult Verify(string verificationString)
+        public async Task<IActionResult> Verify(string verificationString)
         {
             if (string.IsNullOrWhiteSpace(verificationString))
             {
                 return NotFound();
             }
 
-            return Content(verificationString);
+            if (User.Identity.IsAuthenticated)
+            {
+                await HttpContext.SignOutAsync();
+            }
+
+            var result = dbContext.UserVerifications
+                .Include(v => v.User)
+                .FirstOrDefault(v => v.Verification.Equals(verificationString, StringComparison.Ordinal));
+
+            if (result is null)
+            {
+                ViewData["error-message"] =
+                    "Invalid verification string. Please make sure you followed the link correctly.";
+                return View("Login");
+            }
+
+            if (result.User.Confirmed)
+            {
+                ViewData["error-message"] =
+                    "Your email have been already confirmed.";
+                return View("Login");
+            }
+
+            result.User.Confirmed = true;
+            await dbContext.SaveChangesAsync();
+            
+            ViewData["info-message"] = "Your email has been verified.";
+            return View("Login");
         }
 
         public async Task<IActionResult> Logout()
@@ -130,6 +160,17 @@ namespace CtoxWebApp.Controllers
                 ClaimsIdentity.DefaultRoleClaimType);
 
             return HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(id));
+        }
+
+        private async Task SendVerification(User user)
+        {
+            var verification = hashService.GetRandom();
+            dbContext.UserVerifications.Add(new UserVerification
+            {
+                UserId = user.Id,
+                Verification = verification,
+            });
+            await dbContext.SaveChangesAsync();
         }
     }
 }
