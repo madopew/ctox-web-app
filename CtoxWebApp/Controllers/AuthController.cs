@@ -2,14 +2,18 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
+using System.Text;
 using System.Threading.Tasks;
 using CtoxWebApp.DAL;
 using CtoxWebApp.Models;
 using CtoxWebApp.Services;
+using MailKit.Net.Smtp;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using MimeKit;
 
 namespace CtoxWebApp.Controllers
 {
@@ -17,11 +21,13 @@ namespace CtoxWebApp.Controllers
     {
         private readonly AppDbContext dbContext;
         private readonly HashService hashService;
+        private readonly IConfiguration configuration;
         
-        public AuthController(AppDbContext dbContext, HashService hashService)
+        public AuthController(AppDbContext dbContext, HashService hashService, IConfiguration configuration)
         {
             this.dbContext = dbContext;
             this.hashService = hashService;
+            this.configuration = configuration;
         }
 
         public IActionResult Login()
@@ -171,6 +177,31 @@ namespace CtoxWebApp.Controllers
                 Verification = verification,
             });
             await dbContext.SaveChangesAsync();
+
+            var message = new MimeMessage();
+            var from = new MailboxAddress(Encoding.UTF8, "Ctox", "bakyt.madi.work@gmail.com");
+            var to = new MailboxAddress(Encoding.UTF8, user.Username, user.Email);
+            message.From.Add(from);
+            message.To.Add(to);
+            message.Subject = "Ctox Email address Verification.";
+
+            var bodyBuilder = new BodyBuilder
+            {
+                TextBody =
+                    $"To verify your email address on CTOX, please follow the link.\nhttps://localhost:5001/Verify/{verification}"
+            };
+            message.Body = bodyBuilder.ToMessageBody();
+
+            var smtp = new SmtpClient();
+            await smtp.ConnectAsync("smtp.gmail.com", 465, true);
+
+            var email = configuration["Email:Name"];
+            var pwd = configuration["Email:Password"];
+            await smtp.AuthenticateAsync(Encoding.UTF8, email, pwd);
+
+            await smtp.SendAsync(message);
+            await smtp.DisconnectAsync(true);
+            smtp.Dispose();
         }
     }
 }
