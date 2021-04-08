@@ -26,6 +26,7 @@ namespace CtoxWebApp
             var appContextConnection = Configuration.GetConnectionString("AppContext");
 
             services.AddTransient<HashService>();
+            services.AddSingleton<EmailSenderService>();
 
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                 .AddCookie(o =>

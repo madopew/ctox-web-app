@@ -1,6 +1,4 @@
-﻿using CtoxWebApp.Models.UserModel.Domain;
-
-namespace CtoxWebApp.Models.UserModel.View
+﻿namespace CtoxWebApp.Models.UserModel.Domain
 {
     public class UserVerification
     {

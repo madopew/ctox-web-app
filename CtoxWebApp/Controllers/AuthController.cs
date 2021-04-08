@@ -20,22 +20,30 @@ namespace CtoxWebApp.Controllers
 {
     public class AuthController : Controller
     {
-        private const string LoginNotFilledErrorMessage = "Both username and password should be filled in. Please check your username and password and try again.";
-        private const string LoginNotFoundErrorMessage = "We couldn't find an account matching the username and password you entered. Please check your username and password and try again.";
-        private const string LoginNotConfirmedErrorMessage = "It seems like you didn't confirm your email address. Please make sure that you followed the link sent to your email.";
-        private const string VerificationInvalidErrorMessage = "Invalid verification string. Please make sure you followed the link correctly.";
+        private const string LoginNotFilledErrorMessage =
+            "Both username and password should be filled in. Please check your username and password and try again.";
+
+        private const string LoginNotFoundErrorMessage =
+            "We couldn't find an account matching the username and password you entered. Please check your username and password and try again.";
+
+        private const string LoginNotConfirmedErrorMessage =
+            "It seems like you didn't confirm your email address. Please make sure that you followed the link sent to your email.";
+
+        private const string VerificationInvalidErrorMessage =
+            "Invalid verification string. Please make sure you followed the link correctly.";
+
         private const string VerificationAgainErrorMessage = "Your email have been already confirmed.";
         private const string VerificationVerifiedInfoMessage = "Your email has been verified.";
 
         private readonly AppDbContext dbContext;
         private readonly HashService hashService;
-        private readonly IConfiguration configuration;
-        
-        public AuthController(AppDbContext dbContext, HashService hashService, IConfiguration configuration)
+        private readonly EmailSenderService sender;
+
+        public AuthController(AppDbContext dbContext, HashService hashService, EmailSenderService sender)
         {
             this.dbContext = dbContext;
             this.hashService = hashService;
-            this.configuration = configuration;
+            this.sender = sender;
         }
 
         public IActionResult Login()
@@ -59,7 +67,7 @@ namespace CtoxWebApp.Controllers
             }
 
             var hash = hashService.GetHash(string.Concat(user.Username, hashService.GetHash(user.Password)));
-            
+
             var result = dbContext.Users
                 .FirstOrDefault(u => u.Username.Equals(user.Username, StringComparison.Ordinal) &&
                                      u.PasswordHash.Equals(hash, StringComparison.Ordinal));
@@ -84,7 +92,7 @@ namespace CtoxWebApp.Controllers
             await Authenticate(result);
             return RedirectToAction("Index", "Home");
         }
-        
+
         public IActionResult Register()
         {
             return View();
@@ -94,7 +102,7 @@ namespace CtoxWebApp.Controllers
         public async Task<IActionResult> Register(UserRegister user)
         {
             if (!ModelState.IsValid) return View(user);
-            
+
             var role = dbContext.Roles.First(r => r.Name == "User");
             var registered = new User
             {
@@ -151,7 +159,7 @@ namespace CtoxWebApp.Controllers
 
             result.User.Confirmed = true;
             await dbContext.SaveChangesAsync();
-            
+
             ViewData["info-message"] = VerificationVerifiedInfoMessage;
             return View("Login");
         }
@@ -190,31 +198,8 @@ namespace CtoxWebApp.Controllers
                 Verification = verification,
             });
             await dbContext.SaveChangesAsync();
-
-            var message = new MimeMessage();
-            var from = new MailboxAddress(Encoding.UTF8, "Ctox", "bakyt.madi.work@gmail.com");
-            var to = new MailboxAddress(Encoding.UTF8, user.Username, user.Email);
-            message.From.Add(from);
-            message.To.Add(to);
-            message.Subject = "Ctox Email address Verification.";
-
-            var bodyBuilder = new BodyBuilder
-            {
-                TextBody =
-                    $"To verify your email address on CTOX, please follow the link.\nhttps://localhost:5001/Verify/{verification}"
-            };
-            message.Body = bodyBuilder.ToMessageBody();
-
-            var smtp = new SmtpClient();
-            await smtp.ConnectAsync("smtp.gmail.com", 465, true);
-
-            var email = configuration["Email:Name"];
-            var pwd = configuration["Email:Password"];
-            await smtp.AuthenticateAsync(Encoding.UTF8, email, pwd);
-
-            await smtp.SendAsync(message);
-            await smtp.DisconnectAsync(true);
-            smtp.Dispose();
+            await sender.SendEmail(user.Username, user.Email,
+                $"To verify your email address on CTOX, please follow the link.\nhttps://localhost:5001/Verify/{verification}");
         }
     }
 }
