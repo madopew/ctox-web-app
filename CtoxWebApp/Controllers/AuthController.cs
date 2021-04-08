@@ -102,6 +102,16 @@ namespace CtoxWebApp.Controllers
             return Redirect("Login");
         }
 
+        public IActionResult Verify(string verificationString)
+        {
+            if (string.IsNullOrWhiteSpace(verificationString))
+            {
+                return NotFound();
+            }
+
+            return Content(verificationString);
+        }
+
         public async Task<IActionResult> Logout()
         {
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);

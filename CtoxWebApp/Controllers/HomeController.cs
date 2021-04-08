@@ -8,13 +8,7 @@ namespace CtoxWebApp.Controllers
     {
         public IActionResult Index()
         {
-            return Content("Hello world!");
-        }
-
-        [Authorize(Roles = "Super, Admin")]
-        public IActionResult About()
-        {
-            return Content("No user");
+            return Content("Hello authorized!");
         }
     }
 }
