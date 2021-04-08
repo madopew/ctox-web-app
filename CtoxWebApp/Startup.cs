@@ -53,7 +53,7 @@ namespace CtoxWebApp
             }
             else
             {
-                app.UseExceptionHandler("/Home/Error");
+                app.UseExceptionHandler("/Error");
                 app.UseHsts();
             }
             
@@ -70,6 +70,10 @@ namespace CtoxWebApp
 
             app.UseEndpoints(endpoints =>
             {
+                endpoints.MapControllerRoute(
+                    "verification",
+                    "Verify/{verificationString:required}",
+                    new { controller = "Auth", action = "Verify" });
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller}/{action}"

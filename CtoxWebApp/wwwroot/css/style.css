@@ -6,6 +6,7 @@
     --dark: #333;
     --light: #ececec;
     --error: #ff5555;
+    --success: #90ee90;
 }
 
 * {

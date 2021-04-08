@@ -2,25 +2,39 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
+using System.Text;
 using System.Threading.Tasks;
 using CtoxWebApp.DAL;
 using CtoxWebApp.Models;
 using CtoxWebApp.Services;
+using MailKit.Net.Smtp;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using MimeKit;
 
 namespace CtoxWebApp.Controllers
 {
     public class AuthController : Controller
     {
+        private const string LoginNotFilledErrorMessage = "Both username and password should be filled in. Please check your username and password and try again.";
+        private const string LoginNotFoundErrorMessage = "We couldn't find an account matching the username and password you entered. Please check your username and password and try again.";
+        private const string LoginNotConfirmedErrorMessage = "It seems like you didn't confirm your email address. Please make sure that you followed the link sent to your email.";
+        private const string VerificationInvalidErrorMessage = "Invalid verification string. Please make sure you followed the link correctly.";
+        private const string VerificationAgainErrorMessage = "Your email have been already confirmed.";
+        private const string VerificationVerifiedInfoMessage = "Your email has been verified.";
+
         private readonly AppDbContext dbContext;
         private readonly HashService hashService;
+        private readonly IConfiguration configuration;
         
-        public AuthController(AppDbContext dbContext, HashService hashService)
+        public AuthController(AppDbContext dbContext, HashService hashService, IConfiguration configuration)
         {
             this.dbContext = dbContext;
             this.hashService = hashService;
+            this.configuration = configuration;
         }
 
         public IActionResult Login()
@@ -39,7 +53,7 @@ namespace CtoxWebApp.Controllers
             if (user.Username is null || user.Password is null)
             {
                 ViewData["error-message"] =
-                    "Both username and password should be filled in. Please check your username and password and try again.";
+                    LoginNotFilledErrorMessage;
                 return View();
             }
 
@@ -52,14 +66,14 @@ namespace CtoxWebApp.Controllers
             if (result is null)
             {
                 ViewData["error-message"] =
-                    "We couldn't find an account matching the username and password you entered. Please check your username and password and try again.";
+                    LoginNotFoundErrorMessage;
                 return View();
             }
 
             if (!result.Confirmed)
             {
                 ViewData["error-message"] =
-                    "It seems like you didn't confirm your email address. Please make sure that you followed the link sent to your email.";
+                    LoginNotConfirmedErrorMessage;
                 return View();
             }
 
@@ -99,7 +113,46 @@ namespace CtoxWebApp.Controllers
                 await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             }
 
+            await SendVerification(registered);
+
             return Redirect("Login");
+        }
+
+        public async Task<IActionResult> Verify(string verificationString)
+        {
+            if (string.IsNullOrWhiteSpace(verificationString))
+            {
+                return NotFound();
+            }
+
+            if (User.Identity.IsAuthenticated)
+            {
+                await HttpContext.SignOutAsync();
+            }
+
+            var result = dbContext.UserVerifications
+                .Include(v => v.User)
+                .FirstOrDefault(v => v.Verification.Equals(verificationString, StringComparison.Ordinal));
+
+            if (result is null)
+            {
+                ViewData["error-message"] =
+                    VerificationInvalidErrorMessage;
+                return View("Login");
+            }
+
+            if (result.User.Confirmed)
+            {
+                ViewData["error-message"] =
+                    VerificationAgainErrorMessage;
+                return View("Login");
+            }
+
+            result.User.Confirmed = true;
+            await dbContext.SaveChangesAsync();
+            
+            ViewData["info-message"] = VerificationVerifiedInfoMessage;
+            return View("Login");
         }
 
         public async Task<IActionResult> Logout()
@@ -120,6 +173,42 @@ namespace CtoxWebApp.Controllers
                 ClaimsIdentity.DefaultRoleClaimType);
 
             return HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(id));
+        }
+
+        private async Task SendVerification(User user)
+        {
+            var verification = hashService.GetRandom();
+            dbContext.UserVerifications.Add(new UserVerification
+            {
+                UserId = user.Id,
+                Verification = verification,
+            });
+            await dbContext.SaveChangesAsync();
+
+            var message = new MimeMessage();
+            var from = new MailboxAddress(Encoding.UTF8, "Ctox", "bakyt.madi.work@gmail.com");
+            var to = new MailboxAddress(Encoding.UTF8, user.Username, user.Email);
+            message.From.Add(from);
+            message.To.Add(to);
+            message.Subject = "Ctox Email address Verification.";
+
+            var bodyBuilder = new BodyBuilder
+            {
+                TextBody =
+                    $"To verify your email address on CTOX, please follow the link.\nhttps://localhost:5001/Verify/{verification}"
+            };
+            message.Body = bodyBuilder.ToMessageBody();
+
+            var smtp = new SmtpClient();
+            await smtp.ConnectAsync("smtp.gmail.com", 465, true);
+
+            var email = configuration["Email:Name"];
+            var pwd = configuration["Email:Password"];
+            await smtp.AuthenticateAsync(Encoding.UTF8, email, pwd);
+
+            await smtp.SendAsync(message);
+            await smtp.DisconnectAsync(true);
+            smtp.Dispose();
         }
     }
 }

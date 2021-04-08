@@ -11,6 +11,7 @@ namespace CtoxWebApp.DAL
         }
 
         public DbSet<User> Users { get; set; }
+        public DbSet<UserVerification> UserVerifications { get; set; }
         public DbSet<Role> Roles { get; set; }
     }
 }
