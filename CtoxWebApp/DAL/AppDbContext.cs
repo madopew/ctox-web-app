@@ -1,5 +1,4 @@
 ﻿using CtoxWebApp.Models.UserModel.Domain;
-using CtoxWebApp.Models.UserModel.View;
 using Microsoft.EntityFrameworkCore;
 
 namespace CtoxWebApp.DAL
