@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using CtoxWebApp.Attributes.Validations;
 
-namespace CtoxWebApp.Models
+namespace CtoxWebApp.Models.UserModel.View
 {
     public class UserRegister
     {

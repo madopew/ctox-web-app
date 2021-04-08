@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace CtoxWebApp.Models
+namespace CtoxWebApp.Models.UserModel.Domain
 {
     public class Role
     {
