@@ -112,3 +112,6 @@ input[type="submit"] {
     font-weight: 500;
 }
 
+p.add-info {
+    margin-bottom: 20px;
+}

@@ -155,6 +155,11 @@ namespace CtoxWebApp.Controllers
             return View("Login");
         }
 
+        public IActionResult Restore()
+        {
+            return View();
+        }
+
         public async Task<IActionResult> Logout()
         {
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);

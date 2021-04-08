@@ -1,0 +1,15 @@
+﻿@model CtoxWebApp.Models.UserRestore
+@{
+    Layout = "_Auth";
+    ViewData["title"] = "Register";
+}
+
+@using (Html.BeginForm("Register", "Auth", FormMethod.Post))
+{
+    <h1>Forgot password?</h1>
+    <p class="add-info">Enter the email address you used when you joined and we’ll send you instructions to reset your password.</p>
+    <p class="add-info">For security reasons, we do NOT store your password. So rest assured that we will never send your password via email.</p>
+    @Html.EditorForModel()
+    <input type="submit" class="filled" value="Reset"/>
+    <span class="different-page">or <a href="/Auth/Login">Login now</a></span>  
+}
