@@ -22,7 +22,7 @@ else if (ViewData["info-message"] != null)
     </div>
 }
 <div class="container">
-    <div class="illust"><img src="~/res/auth_left.png" alt="Illustration"></div>
+    <div class="illust"><img src='~/@ViewData["image-location"]' alt="Illustration"></div>
     <div class="auth-main">
         @RenderBody()
     </div>

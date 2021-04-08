@@ -1,8 +1,9 @@
-﻿@model CtoxWebApp.Models.UserLogin;
+﻿@model CtoxWebApp.Models.UserModel.View.UserLogin;
 
 @{
     Layout = "_Auth";
     ViewData["title"] = "Login";
+    ViewData["image-location"] = "res/login_left.png";
 }
 
 @using (Html.BeginForm("Login", "Auth", FormMethod.Post))

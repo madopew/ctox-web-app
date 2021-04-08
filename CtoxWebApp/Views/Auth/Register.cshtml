@@ -1,7 +1,8 @@
-﻿@model CtoxWebApp.Models.UserRegister
+﻿@model CtoxWebApp.Models.UserModel.View.UserRegister
 @{
     Layout = "_Auth";
     ViewData["title"] = "Register";
+    ViewData["image-location"] = "res/register_left.png";
 }
 
 @using (Html.BeginForm("Register", "Auth", FormMethod.Post))

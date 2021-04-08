@@ -1,7 +1,8 @@
-﻿@model CtoxWebApp.Models.UserRestore
+﻿@model CtoxWebApp.Models.UserModel.View.UserRestore
 @{
     Layout = "_Auth";
     ViewData["title"] = "Register";
+    ViewData["image-location"] = "res/restore_left.png";
 }
 
 @using (Html.BeginForm("Register", "Auth", FormMethod.Post))
