@@ -1,11 +1,11 @@
-﻿@model CtoxWebApp.Models.UserModel.View.UserRestore
+﻿@model CtoxWebApp.Models.UserModel.View.UserRestoreRequest
 @{
     Layout = "_Auth";
     ViewData["title"] = "Register";
     ViewData["image-location"] = "res/restore_left.png";
 }
 
-@using (Html.BeginForm("Register", "Auth", FormMethod.Post))
+@using (Html.BeginForm("Restore", "Auth", FormMethod.Post))
 {
     <h1>Forgot password?</h1>
     <p class="add-info">Enter the email address you used when you joined and we’ll send you instructions to reset your password.</p>

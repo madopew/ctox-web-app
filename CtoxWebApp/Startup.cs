@@ -76,6 +76,10 @@ namespace CtoxWebApp
                     "Verify/{verificationString:required}",
                     new { controller = "Auth", action = "Verify" });
                 endpoints.MapControllerRoute(
+                    "restorepassword",
+                    "Reset/{resetString:required}",
+                    new { controller = "Auth", action = "Reset" });
+                endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller}/{action}"
                 );

@@ -25,7 +25,7 @@ namespace CtoxWebApp.Services
             var to = new MailboxAddress(Encoding.UTF8, receiverName, receiverEmail);
             message.From.Add(from);
             message.To.Add(to);
-            message.Subject = "Ctox Email address Verification.";
+            message.Subject = "Ctox Service Notification.";
 
             var bodyBuilder = new BodyBuilder
             {

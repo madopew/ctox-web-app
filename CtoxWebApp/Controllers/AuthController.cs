@@ -35,6 +35,11 @@ namespace CtoxWebApp.Controllers
         private const string VerificationAgainErrorMessage = "Your email have been already confirmed.";
         private const string VerificationVerifiedInfoMessage = "Your email has been verified.";
 
+        private const string RestoreInfoMessage =
+            "If this email address was used to create an account, instructions to reset your password will be sent to you. Please check your email.";
+
+        private const string ResetSuccessInfoMessage = "Password for specified user was successfully reset.";
+
         private readonly AppDbContext dbContext;
         private readonly HashService hashService;
         private readonly EmailSenderService sender;
@@ -131,7 +136,7 @@ namespace CtoxWebApp.Controllers
         {
             if (string.IsNullOrWhiteSpace(verificationString))
             {
-                return NotFound();
+                return BadRequest();
             }
 
             if (User.Identity.IsAuthenticated)
@@ -167,6 +172,73 @@ namespace CtoxWebApp.Controllers
         public IActionResult Restore()
         {
             return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Restore(UserRestoreRequest user)
+        {
+            var result = dbContext.Users.FirstOrDefault(u => u.Email.Equals(user.Email));
+            if (result != null)
+            {
+                var hash = hashService.GetRandom();
+                dbContext.PasswordRestores.Add(new PasswordRestore
+                {
+                    UserId = result.Id,
+                    Restore = hash,
+                    Valid = true,
+                });
+                await dbContext.SaveChangesAsync();
+                await sender.SendEmail(result.Username, result.Email,
+                    $"Someone tries to reset your password on CTOX.\nIf it were you, please follow the link https://localhost:5001/Reset/{hash}");
+            }
+
+            ViewData["info-message"] = RestoreInfoMessage;
+            return View("Login");
+        }
+
+        public async Task<IActionResult> Reset(string resetString)
+        {
+            if (string.IsNullOrWhiteSpace(resetString))
+            {
+                return BadRequest();
+            }
+
+            if (User.Identity.IsAuthenticated)
+            {
+                await HttpContext.SignOutAsync();
+            }
+
+            var result = dbContext.PasswordRestores
+                .Include(p => p.User)
+                .FirstOrDefault(p => p.Restore.Equals(resetString));
+
+            if (result is null || !result.Valid)
+            {
+                return BadRequest();
+            }
+
+            return View(new UserRestore {Restore = resetString});
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Reset(UserRestore user)
+        {
+            if (!ModelState.IsValid) return View(user);
+            var result = dbContext.PasswordRestores
+                .Include(p => p.User)
+                .FirstOrDefault(p => p.Restore.Equals(user.Restore));
+
+            if (result is null || !result.Valid)
+            {
+                return BadRequest();
+            }
+
+            result.Valid = false;
+            result.User.PasswordHash = hashService.GetHash(string.Concat(result.User.Username, hashService.GetHash(user.Password)));
+            await dbContext.SaveChangesAsync();
+
+            ViewData["info-message"] = ResetSuccessInfoMessage;
+            return View("Login");
         }
 
         public async Task<IActionResult> Logout()
