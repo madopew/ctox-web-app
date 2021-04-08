@@ -1,4 +1,4 @@
-﻿namespace CtoxWebApp.Models
+﻿namespace CtoxWebApp.Models.UserModel.Domain
 {
     public class UserVerification
     {

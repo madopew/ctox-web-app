@@ -5,7 +5,8 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using CtoxWebApp.DAL;
-using CtoxWebApp.Models;
+using CtoxWebApp.Models.UserModel.Domain;
+using CtoxWebApp.Models.UserModel.View;
 using CtoxWebApp.Services;
 using MailKit.Net.Smtp;
 using Microsoft.AspNetCore.Authentication;
@@ -19,22 +20,35 @@ namespace CtoxWebApp.Controllers
 {
     public class AuthController : Controller
     {
-        private const string LoginNotFilledErrorMessage = "Both username and password should be filled in. Please check your username and password and try again.";
-        private const string LoginNotFoundErrorMessage = "We couldn't find an account matching the username and password you entered. Please check your username and password and try again.";
-        private const string LoginNotConfirmedErrorMessage = "It seems like you didn't confirm your email address. Please make sure that you followed the link sent to your email.";
-        private const string VerificationInvalidErrorMessage = "Invalid verification string. Please make sure you followed the link correctly.";
+        private const string LoginNotFilledErrorMessage =
+            "Both username and password should be filled in. Please check your username and password and try again.";
+
+        private const string LoginNotFoundErrorMessage =
+            "We couldn't find an account matching the username and password you entered. Please check your username and password and try again.";
+
+        private const string LoginNotConfirmedErrorMessage =
+            "It seems like you didn't confirm your email address. Please make sure that you followed the link sent to your email.";
+
+        private const string VerificationInvalidErrorMessage =
+            "Invalid verification string. Please make sure you followed the link correctly.";
+
         private const string VerificationAgainErrorMessage = "Your email have been already confirmed.";
         private const string VerificationVerifiedInfoMessage = "Your email has been verified.";
 
+        private const string RestoreInfoMessage =
+            "If this email address was used to create an account, instructions to reset your password will be sent to you. Please check your email.";
+
+        private const string ResetSuccessInfoMessage = "Password for specified user was successfully reset.";
+
         private readonly AppDbContext dbContext;
         private readonly HashService hashService;
-        private readonly IConfiguration configuration;
-        
-        public AuthController(AppDbContext dbContext, HashService hashService, IConfiguration configuration)
+        private readonly EmailSenderService sender;
+
+        public AuthController(AppDbContext dbContext, HashService hashService, EmailSenderService sender)
         {
             this.dbContext = dbContext;
             this.hashService = hashService;
-            this.configuration = configuration;
+            this.sender = sender;
         }
 
         public IActionResult Login()
@@ -58,7 +72,7 @@ namespace CtoxWebApp.Controllers
             }
 
             var hash = hashService.GetHash(string.Concat(user.Username, hashService.GetHash(user.Password)));
-            
+
             var result = dbContext.Users
                 .FirstOrDefault(u => u.Username.Equals(user.Username, StringComparison.Ordinal) &&
                                      u.PasswordHash.Equals(hash, StringComparison.Ordinal));
@@ -83,7 +97,7 @@ namespace CtoxWebApp.Controllers
             await Authenticate(result);
             return RedirectToAction("Index", "Home");
         }
-        
+
         public IActionResult Register()
         {
             return View();
@@ -93,7 +107,7 @@ namespace CtoxWebApp.Controllers
         public async Task<IActionResult> Register(UserRegister user)
         {
             if (!ModelState.IsValid) return View(user);
-            
+
             var role = dbContext.Roles.First(r => r.Name == "User");
             var registered = new User
             {
@@ -122,7 +136,7 @@ namespace CtoxWebApp.Controllers
         {
             if (string.IsNullOrWhiteSpace(verificationString))
             {
-                return NotFound();
+                return BadRequest();
             }
 
             if (User.Identity.IsAuthenticated)
@@ -150,8 +164,80 @@ namespace CtoxWebApp.Controllers
 
             result.User.Confirmed = true;
             await dbContext.SaveChangesAsync();
-            
+
             ViewData["info-message"] = VerificationVerifiedInfoMessage;
+            return View("Login");
+        }
+
+        public IActionResult Restore()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Restore(UserRestoreRequest user)
+        {
+            var result = dbContext.Users.FirstOrDefault(u => u.Email.Equals(user.Email));
+            if (result != null)
+            {
+                var hash = hashService.GetRandom();
+                dbContext.PasswordRestores.Add(new PasswordRestore
+                {
+                    UserId = result.Id,
+                    Restore = hash,
+                    Valid = true,
+                });
+                await dbContext.SaveChangesAsync();
+                await sender.SendEmail(result.Username, result.Email,
+                    $"Someone tries to reset your password on CTOX.\nIf it were you, please follow the link https://localhost:5001/Reset/{hash}");
+            }
+
+            ViewData["info-message"] = RestoreInfoMessage;
+            return View("Login");
+        }
+
+        public async Task<IActionResult> Reset(string resetString)
+        {
+            if (string.IsNullOrWhiteSpace(resetString))
+            {
+                return BadRequest();
+            }
+
+            if (User.Identity.IsAuthenticated)
+            {
+                await HttpContext.SignOutAsync();
+            }
+
+            var result = dbContext.PasswordRestores
+                .Include(p => p.User)
+                .FirstOrDefault(p => p.Restore.Equals(resetString));
+
+            if (result is null || !result.Valid)
+            {
+                return BadRequest();
+            }
+
+            return View(new UserRestore {Restore = resetString});
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Reset(UserRestore user)
+        {
+            if (!ModelState.IsValid) return View(user);
+            var result = dbContext.PasswordRestores
+                .Include(p => p.User)
+                .FirstOrDefault(p => p.Restore.Equals(user.Restore));
+
+            if (result is null || !result.Valid)
+            {
+                return BadRequest();
+            }
+
+            result.Valid = false;
+            result.User.PasswordHash = hashService.GetHash(string.Concat(result.User.Username, hashService.GetHash(user.Password)));
+            await dbContext.SaveChangesAsync();
+
+            ViewData["info-message"] = ResetSuccessInfoMessage;
             return View("Login");
         }
 
@@ -184,31 +270,8 @@ namespace CtoxWebApp.Controllers
                 Verification = verification,
             });
             await dbContext.SaveChangesAsync();
-
-            var message = new MimeMessage();
-            var from = new MailboxAddress(Encoding.UTF8, "Ctox", "bakyt.madi.work@gmail.com");
-            var to = new MailboxAddress(Encoding.UTF8, user.Username, user.Email);
-            message.From.Add(from);
-            message.To.Add(to);
-            message.Subject = "Ctox Email address Verification.";
-
-            var bodyBuilder = new BodyBuilder
-            {
-                TextBody =
-                    $"To verify your email address on CTOX, please follow the link.\nhttps://localhost:5001/Verify/{verification}"
-            };
-            message.Body = bodyBuilder.ToMessageBody();
-
-            var smtp = new SmtpClient();
-            await smtp.ConnectAsync("smtp.gmail.com", 465, true);
-
-            var email = configuration["Email:Name"];
-            var pwd = configuration["Email:Password"];
-            await smtp.AuthenticateAsync(Encoding.UTF8, email, pwd);
-
-            await smtp.SendAsync(message);
-            await smtp.DisconnectAsync(true);
-            smtp.Dispose();
+            await sender.SendEmail(user.Username, user.Email,
+                $"To verify your email address on CTOX, please follow the link.\nhttps://localhost:5001/Verify/{verification}");
         }
     }
 }

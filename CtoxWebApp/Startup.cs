@@ -26,6 +26,7 @@ namespace CtoxWebApp
             var appContextConnection = Configuration.GetConnectionString("AppContext");
 
             services.AddTransient<HashService>();
+            services.AddSingleton<EmailSenderService>();
 
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                 .AddCookie(o =>
@@ -74,6 +75,10 @@ namespace CtoxWebApp
                     "verification",
                     "Verify/{verificationString:required}",
                     new { controller = "Auth", action = "Verify" });
+                endpoints.MapControllerRoute(
+                    "restorepassword",
+                    "Reset/{resetString:required}",
+                    new { controller = "Auth", action = "Reset" });
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller}/{action}"

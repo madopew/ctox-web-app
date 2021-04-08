@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace CtoxWebApp.Models
+namespace CtoxWebApp.Models.UserModel.View
 {
     public class UserLogin
     {
