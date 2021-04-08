@@ -19,6 +19,13 @@ namespace CtoxWebApp.Controllers
 {
     public class AuthController : Controller
     {
+        private const string LoginNotFilledErrorMessage = "Both username and password should be filled in. Please check your username and password and try again.";
+        private const string LoginNotFoundErrorMessage = "We couldn't find an account matching the username and password you entered. Please check your username and password and try again.";
+        private const string LoginNotConfirmedErrorMessage = "It seems like you didn't confirm your email address. Please make sure that you followed the link sent to your email.";
+        private const string VerificationInvalidErrorMessage = "Invalid verification string. Please make sure you followed the link correctly.";
+        private const string VerificationAgainErrorMessage = "Your email have been already confirmed.";
+        private const string VerificationVerifiedInfoMessage = "Your email has been verified.";
+
         private readonly AppDbContext dbContext;
         private readonly HashService hashService;
         private readonly IConfiguration configuration;
@@ -46,7 +53,7 @@ namespace CtoxWebApp.Controllers
             if (user.Username is null || user.Password is null)
             {
                 ViewData["error-message"] =
-                    "Both username and password should be filled in. Please check your username and password and try again.";
+                    LoginNotFilledErrorMessage;
                 return View();
             }
 
@@ -59,14 +66,14 @@ namespace CtoxWebApp.Controllers
             if (result is null)
             {
                 ViewData["error-message"] =
-                    "We couldn't find an account matching the username and password you entered. Please check your username and password and try again.";
+                    LoginNotFoundErrorMessage;
                 return View();
             }
 
             if (!result.Confirmed)
             {
                 ViewData["error-message"] =
-                    "It seems like you didn't confirm your email address. Please make sure that you followed the link sent to your email.";
+                    LoginNotConfirmedErrorMessage;
                 return View();
             }
 
@@ -130,21 +137,21 @@ namespace CtoxWebApp.Controllers
             if (result is null)
             {
                 ViewData["error-message"] =
-                    "Invalid verification string. Please make sure you followed the link correctly.";
+                    VerificationInvalidErrorMessage;
                 return View("Login");
             }
 
             if (result.User.Confirmed)
             {
                 ViewData["error-message"] =
-                    "Your email have been already confirmed.";
+                    VerificationAgainErrorMessage;
                 return View("Login");
             }
 
             result.User.Confirmed = true;
             await dbContext.SaveChangesAsync();
             
-            ViewData["info-message"] = "Your email has been verified.";
+            ViewData["info-message"] = VerificationVerifiedInfoMessage;
             return View("Login");
         }
 
