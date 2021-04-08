@@ -62,8 +62,17 @@
 }
 
 .editor-label {
+    width: 100%;
     font-weight: 600;
     margin-bottom: 5px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.editor-label a {
+    color: var(--secondary);
+    font-weight: 500;
 }
 
 .editor-field {
@@ -78,6 +87,7 @@ input[type="text"], input[type="password"], input[type="email"] {
     border-radius: 10px;
     transition: 0.1s ease-in-out;
     font-size: 15px;
+    box-sizing: border-box;
 }
 
 input[type="text"]:hover, input[type="password"]:hover, input[type="email"]:hover,
