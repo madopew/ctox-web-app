@@ -10,5 +10,5 @@
     <h1>Sign up to CTOX</h1>
     @Html.EditorForModel()
     <input type="submit" class="filled" value="Register"/>
-    <span class="different-page">or <a href="/Auth/Login">Login now</a></span>  
+    <span class="different-page">or @Html.ActionLink("Login now", "Login", "Auth")</span>  
 }

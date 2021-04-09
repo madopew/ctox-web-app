@@ -12,5 +12,5 @@
     <p class="add-info">For security reasons, we do NOT store your password. So rest assured that we will never send your password via email.</p>
     @Html.EditorForModel()
     <input type="submit" class="filled" value="Reset"/>
-    <span class="different-page">or <a href="/Auth/Login">Login now</a></span>  
+    <span class="different-page">or @Html.ActionLink("Login now", "Login", "Auth")</span>  
 }

@@ -23,5 +23,5 @@
         @Html.EditorFor(m => m.Password)
     </div>
     <input type="submit" class="filled" value="Sign in"/>
-    <span class="different-page">or <a href="/Auth/Register">Register now</a></span>                                                   
+    <span class="different-page">or @Html.ActionLink("Register now", "Register", "Auth")</span>                                                   
 }
