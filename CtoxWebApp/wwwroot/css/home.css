@@ -1,7 +1,6 @@
 ﻿body {
     width: 100vw;
     height: 100vh;
-    background: var(--light);
 }
 
 main {
@@ -13,31 +12,20 @@ main {
 }
 
 main .menu {
-    width: 300px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-}
-
-main .menu .inner {
-    height: 95%;
-    width: 90%;
-    border-radius: 15px;
+    width: 250px;
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
-    align-items: center;
-    background: white;
-    padding: 1rem;
+    align-items: flex-start;
     box-sizing: border-box;
-    font-size: 1.2rem;
+    box-shadow:inset -1px 0 0 0 var(--light);
 }
 
 .logo {
     width: 100%;
     font-weight: 700;
     font-size: 2.5rem;
+    margin: 2rem 0 0 2rem;
 }
 
 .logo .first {
@@ -51,14 +39,17 @@ main .menu .inner {
 .name {
     width: 100%;
     font-weight: 500;
-    margin-bottom: 2rem;
+    margin: 1rem 0 2rem 2rem;
 }
 
 .menu a {
-    border-radius: 20px;
-    width: 80%;
+    width: 100%;
     box-sizing: border-box;
-    padding: 20px;
+    padding: 1rem 2rem 1rem 2rem;
+    font-weight: 500;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
 }
 
 .menu a:hover {

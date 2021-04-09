@@ -53,6 +53,10 @@
     justify-content: center;
 }
 
+.auth-main {
+    position: relative;
+}
+
 .auth-main form {
     width: 45%;
 }
@@ -114,4 +118,24 @@ input[type="submit"] {
 
 p.add-info {
     margin-bottom: 20px;
+}
+
+.close-button {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    width: 50px;
+    height: 50px;
+    border-radius: 15px;
+    border: 1px solid var(--light);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.close-button i {
+    transform: translateX(-2px);
+    color: #888;
+    font-size: 2rem;
 }
