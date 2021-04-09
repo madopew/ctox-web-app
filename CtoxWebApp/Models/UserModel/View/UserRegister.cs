@@ -13,7 +13,7 @@ namespace CtoxWebApp.Models.UserModel.View
         
         [Required(ErrorMessage = "Email should be filled")]
         [DataType(DataType.EmailAddress)]
-        [EmailAddress(ErrorMessage = "Email is not valid")]
+        [Email(ErrorMessage = "Email address is not valid")]
         [UniqueEmail(ErrorMessage = "Email is taken")]
         public string Email { get; set; }
         
