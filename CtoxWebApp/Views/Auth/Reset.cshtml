@@ -1,0 +1,13 @@
+﻿@model CtoxWebApp.Models.UserModel.View.UserRestore
+@{
+    Layout = "_Auth";
+    ViewData["title"] = "Register";
+    ViewData["image-location"] = "res/restore_left.png";
+}
+
+@using (Html.BeginForm("Reset", "Auth", FormMethod.Post))
+{
+    <h1>Reset your password</h1>
+    @Html.EditorForModel()
+    <input type="submit" class="filled" value="Reset"/>
+}

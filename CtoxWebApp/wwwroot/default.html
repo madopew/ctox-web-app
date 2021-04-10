@@ -1,0 +1,118 @@
+﻿<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Ctox</title>
+    <link rel="stylesheet" href="./css/style.css">
+    <link rel="stylesheet" href="./css/landing.css">
+</head>
+<body>
+<header>
+    <div class="logo">
+        <a href="#home">
+            <span class="first">C</span><span class="second">TO</span><span class="first">X</span>
+        </a>
+    </div>
+    <div class="menu">
+        <a href="#home">Home</a>
+        <a href="#about">About</a>
+        <a href="#api">Api</a>
+        <a href="/Auth/Login">Login</a>
+    </div>
+</header>
+<div class="container">
+    <main>
+        <div id="home">
+            <div class="big-logo">
+                <img src="./res/landing.jpg" alt="Parsing Illustration">
+            </div>
+            <div class="motivation">
+                <span class="catch-title">Parsing sucks.</span>
+                <span class="catch-sub">Predefined algorithm is the answer.</span>
+                <span class="catch-text">ctox will help you to parse a program written in C.</span>
+                <span class="catch-text">The parser itself is built in C, so it's super fast and reliable.</span>
+                <span class="catch-text">Result is written in XML format, so you don't have to worry</span>
+                <span class="catch-text">about using parsed program in your context.</span>
+                <div class="motivation-buttons">
+                    <a href="/Auth/Register">
+                        <button class="filled">Try it free</button>
+                    </a>
+                    <a href="#api">
+                        <button>Any more?</button>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div id="about">
+            <span class="high-title">How it works</span>
+            <span class="about-text">Parsing is the process of analyzing a string of symbols of computer language </span>
+            <span class="about-text">conforming to the rules of a formal grammar.</span>
+            <span class="about-text">And <span class="mini-logo">CTOX</span> does it in three steps.</span>
+            <div class="about-illust">
+                <section>
+                    <div class="illust-step">1</div>
+                    <div class="illust-title">Lexical analysis</div>
+                    <div class="illust-info">Splits string into separate words called lexemes and combines them with useful information, producing tokens.</div>
+                </section>
+                <section>
+                    <div class="illust-step">2</div>
+                    <div class="illust-title">Syntax analysis</div>
+                    <div class="illust-info">Recursively combines tokens into bigger groups, using some set of rules, in parallel builds abstract syntax tree.</div>
+                </section>
+                <section>
+                    <div class="illust-step">3</div>
+                    <div class="illust-title">Serialization</div>
+                    <div class="illust-info">Converts abstract parsing tree, which is preseneted in memory as call stack, to a readable and easily parseable format XML.</div>
+                </section>
+            </div>
+        </div>
+        <div id="api">
+            <div class="description">
+                <span class="desc-title">No more boring web UI</span>
+                <span class="desc-sub">Start using our API</span>
+                <span class="desc-text">You can get your <span class="secret">super-secret</span> API key and send requests</span>
+                <span class="desc-text">straightforward to our server without ever logging-in into web interface.</span>
+                <span class="desc-text">You get more efficiency and less headaches.</span>
+                <span class="desc-text"> Available commands can be found in your personal page.</span>
+                <div class="desc-code">
+                    <pre class="prettyprint">https://ctox.com/api/test</pre>
+                </div>
+                <div class="desc-code">
+                    <pre class="prettyprint lang-xml">&lt;function&gt;
+    &lt;prototype&gt; void test ( ) &lt;/prototype&gt;
+    &lt;body&gt;
+        &lt;expression hascalls = &quot;true&quot;&gt;
+            &lt;funccall&gt;
+                &lt;name&gt; printf &lt;/name&gt;
+                &lt;arguments&gt; 
+                    &quot;%s\n&quot; , &quot;Hello from api!&quot; 
+                &lt;/arguments&gt;
+            &lt;/funccall&gt;
+            &lt;text&gt; printf ( &quot;%s\n&quot; , &quot;Hello from api!&quot; ) &lt;/text&gt;
+        &lt;/expression&gt;
+    &lt;/body&gt;
+&lt;/function&gt;</pre>
+                </div>
+                <div class="desc-buttons">
+                    <a href="/Auth/Register">
+                        <button class="filled">Get your key</button>
+                    </a>
+                    <a href="/Auth/Login">
+                        <button>See endpoints</button>
+                    </a>
+                </div>
+            </div>
+            <div class="api-logo">
+                <img src="./res/api.jpg" alt="API">
+            </div>
+        </div>
+    </main>
+</div>
+<footer>
+    <span>KSiS course work. All rights reserved @ Bakyt Madi.</span>
+</footer>
+<script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js"></script>
+</body>
+</html>
