@@ -87,9 +87,6 @@ namespace CtoxWebApp.Controllers
                 return View();
             }
 
-            var role = dbContext.Roles.First(r => r.Id == result.RoleId);
-            result.Role = role;
-
             await Authenticate(result);
             return RedirectToAction("Index", "Home");
         }
@@ -104,7 +101,6 @@ namespace CtoxWebApp.Controllers
         {
             if (!ModelState.IsValid) return View(user);
 
-            var role = dbContext.Roles.First(r => r.Name == "User");
             var registered = new User
             {
                 Username = user.Username,
@@ -112,7 +108,7 @@ namespace CtoxWebApp.Controllers
                 PasswordHash =
                     hashService.GetHash(string.Concat(user.Username, hashService.GetHash(user.Password))),
                 Confirmed = false,
-                Role = role,
+                Role = Role.Regular,
             };
 
             dbContext.Users.Add(registered);
@@ -248,7 +244,7 @@ namespace CtoxWebApp.Controllers
             var claims = new List<Claim>
             {
                 new Claim(ClaimsIdentity.DefaultNameClaimType, user.Username),
-                new Claim(ClaimsIdentity.DefaultRoleClaimType, user.Role.Name),
+                new Claim(ClaimsIdentity.DefaultRoleClaimType, user.Role.ToString()),
             };
 
             var id = new ClaimsIdentity(claims, "ApplicationCookie", ClaimsIdentity.DefaultNameClaimType,

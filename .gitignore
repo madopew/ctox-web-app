@@ -8,9 +8,10 @@ Migrations/
 
 # Useless
 .idea/
+.vscode/
 
 # Sensitive
-appsettings.*
+secretsettings.json
 
 # User-specific files
 *.rsuser
@@ -18,8 +19,6 @@ appsettings.*
 *.user
 *.userosscache
 *.sln.docstates
-Data/
-Downloads/
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs

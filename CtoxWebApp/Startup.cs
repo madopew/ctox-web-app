@@ -15,7 +15,11 @@ namespace CtoxWebApp
     {
         public Startup(IConfiguration configuration)
         {
-            Configuration = configuration;
+            var builder = new ConfigurationBuilder()
+                .AddJsonFile("secretsettings.json")
+                .AddConfiguration(configuration);
+
+            Configuration = builder.Build();
         }
 
         private IConfiguration Configuration { get; }
@@ -23,10 +27,10 @@ namespace CtoxWebApp
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            var appContextConnection = Configuration.GetConnectionString("AppContext");
-
             services.AddTransient<HashService>();
+            services.AddTransient(p => Configuration);
             services.AddSingleton<EmailSenderService>();
+            services.AddSingleton<RestrictionService>();
 
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                 .AddCookie(o =>
@@ -38,7 +42,8 @@ namespace CtoxWebApp
             services
                 .AddControllersWithViews()
                 .AddRazorRuntimeCompilation();
-                
+
+            var appContextConnection = Configuration.GetConnectionString("AppContext");
             services.AddDbContextPool<AppDbContext>(options =>
                 options
                     .UseLazyLoadingProxies()
@@ -57,13 +62,13 @@ namespace CtoxWebApp
                 app.UseExceptionHandler("/Error");
                 app.UseHsts();
             }
-            
+
             app.UseHttpsRedirection();
 
             app.UseDefaultFiles();
-            
+
             app.UseStaticFiles();
-            
+
             app.UseRouting();
 
             app.UseAuthentication();
@@ -83,6 +88,7 @@ namespace CtoxWebApp
                     name: "default",
                     pattern: "{controller}/{action}"
                 );
+                endpoints.MapControllers();
             });
         }
     }

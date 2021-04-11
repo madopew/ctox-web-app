@@ -1,4 +1,5 @@
-﻿using CtoxWebApp.Models.UserModel.Domain;
+﻿using CtoxWebApp.Models.ApiModel.Domain;
+using CtoxWebApp.Models.UserModel.Domain;
 using Microsoft.EntityFrameworkCore;
 
 namespace CtoxWebApp.DAL
@@ -13,6 +14,6 @@ namespace CtoxWebApp.DAL
         public DbSet<User> Users { get; set; }
         public DbSet<UserVerification> UserVerifications { get; set; }
         public DbSet<PasswordRestore> PasswordRestores { get; set; }
-        public DbSet<Role> Roles { get; set; }
+        public DbSet<Api> Apis { get; set; }
     }
 }
