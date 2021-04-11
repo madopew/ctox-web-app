@@ -28,8 +28,9 @@ namespace CtoxWebApp
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddTransient<HashService>();
+            services.AddTransient(p => Configuration);
             services.AddSingleton<EmailSenderService>();
-            services.AddTransient<IConfiguration>(p => Configuration);
+            services.AddSingleton<RestrictionService>();
 
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                 .AddCookie(o =>
@@ -87,6 +88,7 @@ namespace CtoxWebApp
                     name: "default",
                     pattern: "{controller}/{action}"
                 );
+                endpoints.MapControllers();
             });
         }
     }
