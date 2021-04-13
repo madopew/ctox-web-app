@@ -1,18 +1,15 @@
 using System;
 using System.Data.Entity;
 using System.Linq;
-using System.Text.Json.Serialization;
 using System.Threading.Tasks;
-using System.Xml;
 using System.Xml.Linq;
-using Castle.Core.Configuration;
 using CtoxWebApp.DAL;
 using CtoxWebApp.Models.ApiModel.Domain;
-using CtoxWebApp.Services;
+using CtoxWebApp.Services.Implementations;
+using CtoxWebApp.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
-using IConfiguration = Microsoft.Extensions.Configuration.IConfiguration;
 
 namespace CtoxWebApp.Controllers
 {
@@ -36,11 +33,15 @@ namespace CtoxWebApp.Controllers
 
         private readonly AppDbContext context;
         private readonly RestrictionService restriction;
-        
-        public ApiController(AppDbContext context, RestrictionService restriction)
+        private readonly IParseService parse;
+        private readonly IStringCompressService compress;
+
+        public ApiController(AppDbContext context, RestrictionService restriction, IParseService parse, IStringCompressService compress)
         {
             this.context = context;
             this.restriction = restriction;
+            this.parse = parse;
+            this.compress = compress;
         }
 
         [HttpGet("test")]
@@ -56,7 +57,7 @@ namespace CtoxWebApp.Controllers
 
         [Authorize]
         [HttpGet("create")]
-        public async Task<IActionResult> Create([FromServices]HashService hash)
+        public async Task<IActionResult> Create([FromServices]IHashService hash)
         {
             var user = context.Users.First(u => u.Username.Equals(User.Identity.Name));
             var api = context.Apis.FirstOrDefault(a => a.UserId == user.Id);
@@ -107,17 +108,23 @@ namespace CtoxWebApp.Controllers
             }
             
             api.LastUsed = DateTime.Now;
+
+            var parseResult = parse.Parse(request.Data);
+            context.Conversions.Add(new Conversion
+            {
+                Initial = compress.Compress(request.Data),
+                Result = compress.Compress(parseResult),
+                Time = api.LastUsed,
+                UserId = api.UserId,
+            });
             await context.SaveChangesAsync();
             
-            //TODO add to history gzip
-            //TODO actual parsing
-
             if (json != true)
             {
-                return Content(TestResultText, "application/xml");
+                return Content(parseResult, "application/xml");
             }
 
-            return Content(TestResultJson, "application/json");
+            return Content(JsonConvert.SerializeXNode(XElement.Parse(parseResult)), "application/json");
         }
     }
 }

@@ -15,5 +15,6 @@ namespace CtoxWebApp.DAL
         public DbSet<UserVerification> UserVerifications { get; set; }
         public DbSet<PasswordRestore> PasswordRestores { get; set; }
         public DbSet<Api> Apis { get; set; }
+        public DbSet<Conversion> Conversions { get; set; }
     }
 }
