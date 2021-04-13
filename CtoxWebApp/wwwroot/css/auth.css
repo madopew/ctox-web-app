@@ -111,7 +111,8 @@ input[type="submit"] {
     font-weight: 500;
 }
 
-.field-validation-error {
+.field-validation-error,
+.field-validation-error span{
     color: var(--error);
     font-weight: 500;
 }
@@ -136,6 +137,6 @@ p.add-info {
 
 .close-button i {
     transform: translateX(-2px);
-    color: #888;
+    color: #333;
     font-size: 2rem;
 }
