@@ -1,18 +1,15 @@
 using System;
 using System.Data.Entity;
 using System.Linq;
-using System.Text.Json.Serialization;
 using System.Threading.Tasks;
-using System.Xml;
 using System.Xml.Linq;
-using Castle.Core.Configuration;
 using CtoxWebApp.DAL;
 using CtoxWebApp.Models.ApiModel.Domain;
-using CtoxWebApp.Services;
+using CtoxWebApp.Services.Implementations;
+using CtoxWebApp.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
-using IConfiguration = Microsoft.Extensions.Configuration.IConfiguration;
 
 namespace CtoxWebApp.Controllers
 {
@@ -56,7 +53,7 @@ namespace CtoxWebApp.Controllers
 
         [Authorize]
         [HttpGet("create")]
-        public async Task<IActionResult> Create([FromServices]HashService hash)
+        public async Task<IActionResult> Create([FromServices]IHashService hash)
         {
             var user = context.Users.First(u => u.Username.Equals(User.Identity.Name));
             var api = context.Apis.FirstOrDefault(a => a.UserId == user.Id);
@@ -107,9 +104,10 @@ namespace CtoxWebApp.Controllers
             }
             
             api.LastUsed = DateTime.Now;
-            await context.SaveChangesAsync();
             
             //TODO add to history gzip
+            await context.SaveChangesAsync();
+
             //TODO actual parsing
 
             if (json != true)

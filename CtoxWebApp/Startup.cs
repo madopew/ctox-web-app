@@ -1,5 +1,7 @@
 using CtoxWebApp.DAL;
-using CtoxWebApp.Services;
+using CtoxWebApp.Services.Implementations;
+using CtoxWebApp.Services.Implementations.Mocks;
+using CtoxWebApp.Services.Interfaces;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -27,9 +29,10 @@ namespace CtoxWebApp
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddTransient<HashService>();
             services.AddTransient(p => Configuration);
-            services.AddSingleton<EmailSenderService>();
+            services.AddTransient<IHashService, HashService>();
+            services.AddTransient<IParseService, ParseMock>();
+            services.AddSingleton<IEmailSenderService, EmailSenderService>();
             services.AddSingleton<RestrictionService>();
 
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)

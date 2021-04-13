@@ -3,7 +3,7 @@ using CtoxWebApp.Models.ApiModel.Domain;
 using CtoxWebApp.Models.UserModel.Domain;
 using Microsoft.Extensions.Configuration;
 
-namespace CtoxWebApp.Services
+namespace CtoxWebApp.Services.Implementations
 {
     public class RestrictionService
     {

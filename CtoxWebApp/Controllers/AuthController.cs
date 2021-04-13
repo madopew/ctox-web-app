@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using CtoxWebApp.DAL;
 using CtoxWebApp.Models.UserModel.Domain;
 using CtoxWebApp.Models.UserModel.View;
-using CtoxWebApp.Services;
+using CtoxWebApp.Services.Interfaces;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
@@ -37,10 +37,10 @@ namespace CtoxWebApp.Controllers
         private const string ResetSuccessInfoMessage = "Password for specified user was successfully reset.";
 
         private readonly AppDbContext dbContext;
-        private readonly HashService hashService;
-        private readonly EmailSenderService sender;
+        private readonly IHashService hashService;
+        private readonly IEmailSenderService sender;
 
-        public AuthController(AppDbContext dbContext, HashService hashService, EmailSenderService sender)
+        public AuthController(AppDbContext dbContext, IHashService hashService, IEmailSenderService sender)
         {
             this.dbContext = dbContext;
             this.hashService = hashService;
@@ -180,7 +180,7 @@ namespace CtoxWebApp.Controllers
                     Valid = true,
                 });
                 await dbContext.SaveChangesAsync();
-                await sender.SendEmail(result.Username, result.Email,
+                await sender.SendEmailAsync(result.Username, result.Email,
                     $"Someone tries to reset your password on CTOX.\nIf it were you, please follow the link https://localhost:5001/Reset/{hash}");
             }
 
@@ -262,7 +262,7 @@ namespace CtoxWebApp.Controllers
                 Verification = verification,
             });
             await dbContext.SaveChangesAsync();
-            await sender.SendEmail(user.Username, user.Email,
+            await sender.SendEmailAsync(user.Username, user.Email,
                 $"To verify your email address on CTOX, please follow the link.\nhttps://localhost:5001/Verify/{verification}");
         }
     }

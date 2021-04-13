@@ -1,12 +1,13 @@
 ﻿using System.Text;
 using System.Threading.Tasks;
+using CtoxWebApp.Services.Interfaces;
 using MailKit.Net.Smtp;
 using Microsoft.Extensions.Configuration;
 using MimeKit;
 
-namespace CtoxWebApp.Services
+namespace CtoxWebApp.Services.Implementations
 {
-    public class EmailSenderService
+    public class EmailSenderService: IEmailSenderService
     {
         private readonly string email;
         private readonly string password;
@@ -17,7 +18,7 @@ namespace CtoxWebApp.Services
             password = configuration["Email:Password"];
         }
 
-        public async Task SendEmail(string receiverName, string receiverEmail, string body)
+        public async Task SendEmailAsync(string receiverName, string receiverEmail, string body)
         {
 
             var message = new MimeMessage();
