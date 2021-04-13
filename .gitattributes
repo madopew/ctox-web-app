@@ -1,8 +1,1 @@
-CtoxWebApp/wwwroot/lib/* linguist-vendored
-lib/* linguist-vendored
-CtoxWebApp/wwwroot/lib/* linguist-detectable=false
-lib/* linguist-detectable=false
-CtoxWebApp/wwwroot/lib/ linguist-vendored
-lib/ linguist-vendored
-CtoxWebApp/wwwroot/lib/ linguist-detectable=false
-lib/ linguist-detectable=false
+CtoxWebApp/wwwroot/lib/* linguist-vendored=true
