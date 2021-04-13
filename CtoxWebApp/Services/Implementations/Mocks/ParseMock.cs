@@ -5,16 +5,17 @@ namespace CtoxWebApp.Services.Implementations.Mocks
 {
     public class ParseMock : IParseService
     {
-        private readonly HashService hash;
+        private readonly IHashService hash;
         
-        public ParseMock(HashService hash)
+        public ParseMock(IHashService hash)
         {
             this.hash = hash;
         }
 
         public string Parse(string content)
         {
-            return string.Concat(Enumerable.Repeat(hash.GetRandom(), 10));
+            var randomness = string.Concat(Enumerable.Repeat(hash.GetRandom(), 10));
+            return $"<text>{randomness}</text>";
         }
     }
 }

@@ -33,11 +33,15 @@ namespace CtoxWebApp.Controllers
 
         private readonly AppDbContext context;
         private readonly RestrictionService restriction;
-        
-        public ApiController(AppDbContext context, RestrictionService restriction)
+        private readonly IParseService parse;
+        private readonly IStringCompressService compress;
+
+        public ApiController(AppDbContext context, RestrictionService restriction, IParseService parse, IStringCompressService compress)
         {
             this.context = context;
             this.restriction = restriction;
+            this.parse = parse;
+            this.compress = compress;
         }
 
         [HttpGet("test")]
@@ -104,18 +108,23 @@ namespace CtoxWebApp.Controllers
             }
             
             api.LastUsed = DateTime.Now;
-            
-            //TODO add to history gzip
+
+            var parseResult = parse.Parse(request.Data);
+            context.Conversions.Add(new Conversion
+            {
+                Initial = compress.Compress(request.Data),
+                Result = compress.Compress(parseResult),
+                Time = api.LastUsed,
+                UserId = api.UserId,
+            });
             await context.SaveChangesAsync();
-
-            //TODO actual parsing
-
+            
             if (json != true)
             {
-                return Content(TestResultText, "application/xml");
+                return Content(parseResult, "application/xml");
             }
 
-            return Content(TestResultJson, "application/json");
+            return Content(JsonConvert.SerializeXNode(XElement.Parse(parseResult)), "application/json");
         }
     }
 }

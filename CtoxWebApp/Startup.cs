@@ -31,6 +31,7 @@ namespace CtoxWebApp
         {
             services.AddTransient(p => Configuration);
             services.AddTransient<IHashService, HashService>();
+            services.AddTransient<IStringCompressService, GzipCompressService>();
             services.AddTransient<IParseService, ParseMock>();
             services.AddSingleton<IEmailSenderService, EmailSenderService>();
             services.AddSingleton<RestrictionService>();
