@@ -10,5 +10,25 @@ namespace CtoxWebApp.Controllers
         {
             return View("Convert");
         }
+
+        public IActionResult History()
+        {
+            return View();
+        }
+        
+        public IActionResult Balance()
+        {
+            return View();
+        }
+        
+        public IActionResult Api()
+        {
+            return View();
+        }
+        
+        public IActionResult Manage()
+        {
+            return View();
+        }
     }
 }

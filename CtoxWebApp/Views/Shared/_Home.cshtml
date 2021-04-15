@@ -1,4 +1,7 @@
-﻿<!doctype html>
+﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@addTagHelper *, CtoxWebApp
+
+<!doctype html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -18,17 +21,17 @@
         <div class="name">
             <span>@User.Identity.Name</span>
         </div>
-        @Html.ActionLink("Convert", "Index", "Home")
-        @Html.ActionLink("History", "History", "Home")
-        @Html.ActionLink("Balance", "Balance", "Home")
-        @Html.ActionLink("Api", "Api", "Home")
+        <a asp-action="Index" asp-controller="Home" active-class="active">Convert</a>
+        <a asp-action="History" asp-controller="Home" active-class="active">History</a>
+        <a asp-action="Balance" asp-controller="Home" active-class="active">Balance</a>
+        <a asp-action="Api" asp-controller="Home" active-class="active">Api</a>
 
         @if (User.IsInRole("Admin"))
         {
-            @Html.ActionLink("Manage", "Manage", "Home")
+            <a asp-action="Manage" asp-controller="Home" active-class="active">Manage</a>
         }
 
-        @Html.ActionLink("Logout", "Logout", "Auth")
+        <a asp-action="Logout" asp-controller="Auth">Logout</a>
     </div>
     <div class="content">
         @RenderBody()
