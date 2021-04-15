@@ -1,4 +1,38 @@
-﻿@{
+﻿@using CtoxWebApp.Models.ApiModel.View
+@{
     Layout = "_Home";
     ViewData["title"] = "Convert";
+}
+
+<div class="conversion-table">
+    <textarea id="conversion-content">#include &lt;stdio.h&gt;&#13;&#10;&#13;&#10;int main() {&#13;&#10;    printf("%s\n", "Hello world!");&#13;&#10;    return 0;&#13;&#10;}</textarea>
+    
+    <div class="conversion-operations">
+        @Html.DropDownList("conversion-type", Html.GetEnumSelectList(typeof(ParseType)))
+        <button class="filled">Parse</button>
+    </div>
+    
+    <textarea readonly id="conversion-result"></textarea>
+</div>
+
+<script>
+    let text = document.getElementById("conversion-content");
+    let editor = CodeMirror.fromTextArea(text, {
+        mode:  "text/x-csrc",
+        indentUnit: 4,
+        lineNumbers: true,
+        theme: "eclipse"
+    });
+</script>
+
+@section head {
+    <link rel="stylesheet" href="~/css/Home/convert.css">
+    <script
+        src="https://code.jquery.com/jquery-3.6.0.min.js"
+        integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
+        crossorigin="anonymous"></script>
+    <script src="~/lib/codemirror-5.60.0/lib/codemirror.js"></script>
+    <link rel="stylesheet" href="~/lib/codemirror-5.60.0/lib/codemirror.css">
+    <link rel="stylesheet" href="~/lib/codemirror-5.60.0/theme/eclipse.css" >
+    <script src="~/lib/codemirror-5.60.0/mode/clike/clike.js"></script>
 }

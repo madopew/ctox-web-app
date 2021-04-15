@@ -9,7 +9,8 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Ctox - @ViewData["title"]</title>
     <link rel="stylesheet" href="~/css/style.css">
-    <link rel="stylesheet" href="~/css/home.css">
+    <link rel="stylesheet" href="~/css/Home/home.css">
+    @RenderSection("head", false)
     <link rel="stylesheet" href="~/lib/font-awesome-4.7.0/css/font-awesome.min.css">
 </head>
 <body>
@@ -19,7 +20,7 @@
             <span class="first">C</span><span class="second">TO</span><span class="first">X</span>
         </div>
         <div class="name">
-            <span>@User.Identity.Name</span>
+            <span><i class="fa fa-user-circle-o" aria-hidden="true"></i> @User.Identity.Name</span>
         </div>
         <a asp-action="Index" asp-controller="Home" active-class="active">Convert</a>
         <a asp-action="History" asp-controller="Home" active-class="active">History</a>
