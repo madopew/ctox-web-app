@@ -5,14 +5,18 @@
 }
 
 <div class="conversion-table">
-    <textarea id="conversion-content">#include &lt;stdio.h&gt;&#13;&#10;&#13;&#10;int main() {&#13;&#10;    printf("%s\n", "Hello world!");&#13;&#10;    return 0;&#13;&#10;}</textarea>
+    <div class="conversion-area">
+        <textarea id="conversion-content">#include &lt;stdio.h&gt;&#13;&#10;&#13;&#10;int main() {&#13;&#10;    printf("%s\n", "Hello world!");&#13;&#10;    return 0;&#13;&#10;}</textarea>
+    </div>
 
     <div class="conversion-operations">
         @Html.DropDownList("conversion-type", Html.GetEnumSelectList(typeof(ParseType)))
         <button class="filled" onclick="parseAsync()">Parse</button>
     </div>
-
-    <textarea id="conversion-result"></textarea>
+    
+    <div class="conversion-area">
+            <textarea id="conversion-result"></textarea>
+    </div>
 </div>
 
 <script>
@@ -31,17 +35,20 @@
         indentUnit: 4,
         lineNumbers: true,
         theme: "eclipse",
-        readOnly: "nocursor",
+        readOnly: "nocursor"
     });
     
     function parseAsync() {
-        let jsonVal = @((int)ParseType.Json) + "";
+        // TODO add animation
+        // TODO error handling
+        let jsonVal = @((int) ParseType.Json) + "";
         let isJson = ($("#conversion-type").val() === jsonVal);
         $.ajax({
-            url: '/api/test',
-            type: 'GET',
+            url: "@Url.Action("Index", "Home")",
+            type: 'POST',
             data: {
-                json: isJson
+                data: editorContent.getValue(),
+                type: $("#conversion-type").val()
             },
             success: function (data) {
                 let content;
