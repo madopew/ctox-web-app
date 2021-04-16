@@ -17,22 +17,24 @@
 <main>
     <div class="menu">
         <div class="logo">
-            <span class="first">C</span><span class="second">TO</span><span class="first">X</span>
+            <a href="/">
+                <span class="first">C</span><span class="second">TO</span><span class="first">X</span>
+            </a>
         </div>
         <div class="name">
             <span><i class="fa fa-user-circle-o" aria-hidden="true"></i> @User.Identity.Name</span>
         </div>
-        <a asp-action="Index" asp-controller="Home" active-class="active">Convert</a>
-        <a asp-action="History" asp-controller="Home" active-class="active">History</a>
-        <a asp-action="Balance" asp-controller="Home" active-class="active">Balance</a>
-        <a asp-action="Api" asp-controller="Home" active-class="active">Api</a>
+        <a asp-action="Index" asp-controller="Home" class="menu-element" active-class="active">Convert</a>
+        <a asp-action="History" asp-controller="Home" class="menu-element" active-class="active">History</a>
+        <a asp-action="Balance" asp-controller="Home" class="menu-element" active-class="active">Balance</a>
+        <a asp-action="Api" asp-controller="Home" class="menu-element" active-class="active">Api</a>
 
         @if (User.IsInRole("Admin"))
         {
-            <a asp-action="Manage" asp-controller="Home" active-class="active">Manage</a>
+            <a asp-action="Manage" asp-controller="Home" class="menu-element" active-class="active">Manage</a>
         }
 
-        <a asp-action="Logout" asp-controller="Auth">Logout</a>
+        <a asp-action="Logout" class="menu-element" asp-controller="Auth">Logout</a>
     </div>
     <div class="content">
         @RenderBody()
