@@ -59,17 +59,19 @@ namespace CtoxWebApp.Controllers
         [HttpGet("create")]
         public async Task<IActionResult> Create([FromServices]IHashService hash)
         {
-            var user = context.Users.First(u => u.Username.Equals(User.Identity.Name));
+            var user = context.Users.First(u => u.Username.Equals(HttpContext.User.Identity.Name));
             var api = context.Apis.FirstOrDefault(a => a.UserId == user.Id);
 
             if (api is null)
             {
-                context.Apis.Add(new Api
+                api = new Api
                 {
-                    Key = hash.GetRandom(),    
+                    Key = hash.GetRandom(),
                     LastUsed = DateTime.MinValue,
                     UserId = user.Id
-                });
+                };
+                
+                context.Apis.Add(api);
             }
             else
             {
@@ -77,15 +79,17 @@ namespace CtoxWebApp.Controllers
             }
 
             await context.SaveChangesAsync();
-            return Ok();
+            return StatusCode(201, new { api.Key });
         }
 
         [HttpPost("parse")]
         public async Task<IActionResult> Parse([FromQuery]bool? json, [FromBody]ParseRequest request)
         {
-            if (request is null)
+            if (request is null 
+                || string.IsNullOrWhiteSpace(request.Data)
+                || string.IsNullOrWhiteSpace(request.Key))
             {
-                return BadRequest();
+                return BadRequest("Empty");
             }
 
             var api = context.Apis

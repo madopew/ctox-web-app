@@ -1,4 +1,108 @@
-﻿@{
+﻿@using CtoxWebApp.Models.ApiModel.View
+@{
     Layout = "_Home";
     ViewData["title"] = "Convert";
+}
+
+<div class="conversion-container">
+    <div class="conversion-area">
+        <textarea id="conversion-content">#include &lt;stdio.h&gt;&#13;&#10;&#13;&#10;int main() {&#13;&#10;    printf("%s\n", "Hello world!");&#13;&#10;    return 0;&#13;&#10;}</textarea>
+    </div>
+
+    <div class="conversion-operations">
+        @Html.DropDownList("conversion-type", Html.GetEnumSelectList(typeof(ParseType)))
+        <button class="filled" onclick="parseAsync()">Parse</button>
+    </div>
+
+    <div class="conversion-area">
+        <textarea id="conversion-result"></textarea>
+        <div class="loader-container hidden">
+            <div class="loader"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+   
+    let textContent = document.getElementById("conversion-content");
+    let editorContent = CodeMirror.fromTextArea(textContent, {
+        mode:  "text/x-csrc",
+        indentUnit: 4,
+        lineNumbers: true,
+        theme: "eclipse",
+    });
+    
+    let textResult = document.getElementById("conversion-result");
+    let editorResult = CodeMirror.fromTextArea(textResult, {
+        mode:  "text/xml",
+        indentUnit: 4,
+        lineNumbers: true,
+        theme: "eclipse",
+        readOnly: "nocursor"
+    });
+    
+    function parseAsync() {
+        $(".loader-container").removeClass("hidden");
+        let jsonVal = @((int) ParseType.Json) + "";
+        let isJson = ($("#conversion-type").val() === jsonVal);
+        $.ajax({
+            url: "@Url.Action("Index", "Home")",
+            type: 'POST',
+            data: {
+                data: editorContent.getValue(),
+                type: $("#conversion-type").val()
+            },
+            success: function (data) {
+                let content;
+                if (isJson) {
+                    content = JSON.stringify(data, null, 4);
+                    editorResult.setOption("mode", "application/ld+json");
+                } else {
+                    content = new XMLSerializer().serializeToString(data);
+                    content = new XmlBeautify()
+                        .beautify(content, {
+                            indent: "    "
+                        });
+                    editorResult.setOption("mode", "text/xml");
+                }
+             
+                editorResult.setValue(content);
+            },
+            error: function (data) {
+                switch (data.status) {
+                    case 400:
+                        alert("Code is empty!");
+                        break;
+                    case 401:
+                        alert("You don't have an api key!");
+                        break;
+                    case 429:
+                        alert("Too many requests!");
+                        break;
+                    case 405:
+                        alert("Code size is too big!");
+                        break;
+                }
+                editorResult.setValue("");
+            },
+            complete: function (data) {
+                $(".loader-container").addClass("hidden");
+            }
+        });
+    }
+</script>
+
+@section head {
+    <link rel="stylesheet" href="~/css/Home/convert.css">
+    <script
+        src="https://code.jquery.com/jquery-3.6.0.min.js"
+        integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xml-beautify@1.1.1/dist/XmlBeautify.js"></script>
+    <script src="~/lib/codemirror-5.60.0/lib/codemirror.js"></script>
+    <link rel="stylesheet" href="~/lib/codemirror-5.60.0/lib/codemirror.css">
+    <link rel="stylesheet" href="~/lib/codemirror-5.60.0/theme/eclipse.css">
+    <script src="~/lib/codemirror-5.60.0/mode/clike/clike.js"></script>
+    <script src="~/lib/codemirror-5.60.0/mode/xml/xml.js"></script>
+    <script src="~/lib/codemirror-5.60.0/mode/javascript/javascript.js"></script>
 }

@@ -1,4 +1,10 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using System.Data.Entity;
+using System.Linq;
+using System.Threading.Tasks;
+using CtoxWebApp.DAL;
+using CtoxWebApp.Models.ApiModel.Domain;
+using CtoxWebApp.Models.ApiModel.View;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CtoxWebApp.Controllers
@@ -6,9 +12,63 @@ namespace CtoxWebApp.Controllers
     [Authorize]
     public class HomeController : Controller
     {
+        private readonly AppDbContext context;
+
+        public HomeController(AppDbContext context)
+        {
+            this.context = context;
+        }
+
         public IActionResult Index()
         {
             return View("Convert");
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Index(ParseRequestUi request, [FromServices] ApiController apiController)
+        {
+            if (request is null
+                || string.IsNullOrWhiteSpace(request.Data))
+            {
+                return BadRequest();
+            }
+            
+            var api = context.Apis
+                .Include(a => a.User)
+                .FirstOrDefault(a => a.User.Username.Equals(User.Identity.Name));
+
+            if (api is null)
+            {
+                return Unauthorized();
+            }
+
+            var result = await apiController.Parse(request.Type == ParseType.Json, new ParseRequest
+            {
+                Key = api.Key,
+                Data = request.Data
+            });
+            
+            return result;
+        }
+
+        public IActionResult History()
+        {
+            return View();
+        }
+        
+        public IActionResult Balance()
+        {
+            return View();
+        }
+        
+        public IActionResult Api()
+        {
+            return View();
+        }
+        
+        public IActionResult Manage()
+        {
+            return View();
         }
     }
 }

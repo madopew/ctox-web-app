@@ -45,6 +45,7 @@ namespace CtoxWebApp
 
             services
                 .AddControllersWithViews()
+                .AddControllersAsServices()
                 .AddRazorRuntimeCompilation();
 
             var appContextConnection = Configuration.GetConnectionString("AppContext");

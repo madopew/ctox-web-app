@@ -1,4 +1,7 @@
-﻿<!doctype html>
+﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@addTagHelper *, CtoxWebApp
+
+<!doctype html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -6,29 +9,32 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Ctox - @ViewData["title"]</title>
     <link rel="stylesheet" href="~/css/style.css">
-    <link rel="stylesheet" href="~/css/home.css">
+    <link rel="stylesheet" href="~/css/Home/home.css">
+    @RenderSection("head", false)
     <link rel="stylesheet" href="~/lib/font-awesome-4.7.0/css/font-awesome.min.css">
 </head>
 <body>
 <main>
     <div class="menu">
         <div class="logo">
-            <span class="first">C</span><span class="second">TO</span><span class="first">X</span>
+            <a href="/">
+                <span class="first">C</span><span class="second">TO</span><span class="first">X</span>
+            </a>
         </div>
         <div class="name">
-            <span>@User.Identity.Name</span>
+            <span><i class="fa fa-user-circle-o" aria-hidden="true"></i> @User.Identity.Name</span>
         </div>
-        @Html.ActionLink("Convert", "Index", "Home")
-        @Html.ActionLink("History", "History", "Home")
-        @Html.ActionLink("Balance", "Balance", "Home")
-        @Html.ActionLink("Api", "Api", "Home")
+        <a asp-action="Index" asp-controller="Home" class="menu-element" active-class="active">Convert</a>
+        <a asp-action="History" asp-controller="Home" class="menu-element" active-class="active">History</a>
+        <a asp-action="Balance" asp-controller="Home" class="menu-element" active-class="active">Balance</a>
+        <a asp-action="Api" asp-controller="Home" class="menu-element" active-class="active">Api</a>
 
         @if (User.IsInRole("Admin"))
         {
-            @Html.ActionLink("Manage", "Manage", "Home")
+            <a asp-action="Manage" asp-controller="Home" class="menu-element" active-class="active">Manage</a>
         }
 
-        @Html.ActionLink("Logout", "Logout", "Auth")
+        <a asp-action="Logout" class="menu-element" asp-controller="Auth">Logout</a>
     </div>
     <div class="content">
         @RenderBody()
