@@ -4,7 +4,7 @@
     ViewData["title"] = "Convert";
 }
 
-<div class="conversion-table">
+<div class="conversion-container">
     <div class="conversion-area">
         <textarea id="conversion-content">#include &lt;stdio.h&gt;&#13;&#10;&#13;&#10;int main() {&#13;&#10;    printf("%s\n", "Hello world!");&#13;&#10;    return 0;&#13;&#10;}</textarea>
     </div>
@@ -13,9 +13,12 @@
         @Html.DropDownList("conversion-type", Html.GetEnumSelectList(typeof(ParseType)))
         <button class="filled" onclick="parseAsync()">Parse</button>
     </div>
-    
+
     <div class="conversion-area">
-            <textarea id="conversion-result"></textarea>
+        <textarea id="conversion-result"></textarea>
+        <div class="loader-container hidden">
+            <div class="loader"></div>
+        </div>
     </div>
 </div>
 
@@ -39,8 +42,7 @@
     });
     
     function parseAsync() {
-        // TODO add animation
-        // TODO error handling
+        $(".loader-container").removeClass("hidden");
         let jsonVal = @((int) ParseType.Json) + "";
         let isJson = ($("#conversion-type").val() === jsonVal);
         $.ajax({
@@ -65,6 +67,26 @@
                 }
              
                 editorResult.setValue(content);
+            },
+            error: function (data) {
+                switch (data.status) {
+                    case 400:
+                        alert("Code is empty!");
+                        break;
+                    case 401:
+                        alert("You don't have an api key!");
+                        break;
+                    case 429:
+                        alert("Too many requests!");
+                        break;
+                    case 405:
+                        alert("Code size is too big!");
+                        break;
+                }
+                editorResult.setValue("");
+            },
+            complete: function (data) {
+                $(".loader-container").addClass("hidden");
             }
         });
     }
