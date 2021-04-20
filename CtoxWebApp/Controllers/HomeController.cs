@@ -12,6 +12,7 @@ namespace CtoxWebApp.Controllers
     [Authorize]
     public class HomeController : Controller
     {
+        private const int HistoryMaxAmount = 10;
         private readonly AppDbContext context;
 
         public HomeController(AppDbContext context)
@@ -32,7 +33,7 @@ namespace CtoxWebApp.Controllers
             {
                 return BadRequest();
             }
-            
+
             var api = context.Apis
                 .Include(a => a.User)
                 .FirstOrDefault(a => a.User.Username.Equals(User.Identity.Name));
@@ -42,29 +43,55 @@ namespace CtoxWebApp.Controllers
                 return Unauthorized();
             }
 
-            var result = await apiController.Parse(request.Type == ParseType.Json, new ParseRequest
-            {
-                Data = request.Data
-            }, api.Key);
-            
+            var result = await apiController.Parse(
+                request.Type == ParseType.Json,
+                new ParseRequest
+                {
+                    Data = request.Data
+                }, api.Key);
+
             return result;
         }
 
         public IActionResult History()
         {
-            return View();
+            var api = context.Apis
+                .Include(a => a.User)
+                .FirstOrDefault(a => a.User.Username.Equals(User.Identity.Name));
+
+            if (api is null)
+            {
+                return View(new ConversionUi
+                {
+                    HasKey = false,
+                    Amount = 0,
+                    Conversions = Enumerable.Empty<Conversion>()
+                });
+            }
+
+            var conversions = context.Conversions
+                .Where(c => c.UserId == api.UserId)
+                .Take(HistoryMaxAmount)
+                .ToList();
+
+            return View(new ConversionUi
+            {
+                HasKey = true,
+                Amount = conversions.Count,
+                Conversions = conversions
+            });
         }
-        
+
         public IActionResult Balance()
         {
             return View();
         }
-        
+
         public IActionResult Api()
         {
             return View();
         }
-        
+
         public IActionResult Manage()
         {
             return View();
