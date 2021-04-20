@@ -130,5 +130,33 @@ namespace CtoxWebApp.Controllers
 
             return Content(JsonConvert.SerializeXNode(XElement.Parse(parseResult)), "application/json");
         }
+
+        [HttpGet("history")]
+        public async Task<IActionResult> History([FromBody] History history)
+        {
+            if (history is null
+                || string.IsNullOrWhiteSpace(history.Key))
+            {
+                return BadRequest("Empty");
+            }
+
+            var api = context.Apis
+                .Include(a => a.User)
+                .FirstOrDefault(a => a.Key.Equals(history.Key));
+
+            if (api is null)
+            {
+                return Unauthorized();
+            }
+
+            var conversions = context.Conversions
+                .Where(c => c.UserId == api.UserId)
+                .Skip(history.Skip)
+                .Take(history.Limit)
+                .Select(c => new { c.Id, c.Time });
+
+            var result = new { Amount = conversions.Count(), Data = conversions };
+            return Content(JsonConvert.SerializeObject(result), "application/json");
+        }
     }
 }
