@@ -7,6 +7,7 @@ namespace CtoxWebApp.Models.ApiModel.Domain
     {
         public int Id { get; set; }
         public DateTime Time { get; set; }
+        public ParseType Type { get; set; }
         public string Initial { get; set; }
         public string Result { get; set; }
         public int UserId { get; set; }
