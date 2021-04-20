@@ -27,7 +27,6 @@ namespace CtoxWebApp.Attributes.Filters
             if (!exists)
             {
                 context.Result = new UnauthorizedResult();
-                return;
             }
         }
 

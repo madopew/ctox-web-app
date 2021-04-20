@@ -1,7 +1,6 @@
 using System;
 using System.Data.Entity;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using CtoxWebApp.Attributes.Filters;
@@ -86,7 +85,10 @@ namespace CtoxWebApp.Controllers
         }
 
         [HttpPost("parse")]
-        public async Task<IActionResult> Parse([FromQuery]bool? json, [FromBody]ParseRequest request, [FromHeader(Name = "x-api-key")] string key)
+        public async Task<IActionResult> Parse(
+            bool? json, 
+            [FromBody] ParseRequest request, 
+            [FromHeader(Name = "x-api-key")] string key)
         {
             if (request is null 
                 || string.IsNullOrWhiteSpace(request.Data))
@@ -142,6 +144,39 @@ namespace CtoxWebApp.Controllers
                 .Select(c => new { c.Id, c.Time });
 
             var result = new { Amount = conversions.Count(), Data = conversions };
+            return Content(JsonConvert.SerializeObject(result), "application/json");
+        }
+
+        [HttpGet("view")]
+        public IActionResult View(int? id, [FromHeader(Name = "x-api-key")] string key)
+        {
+            if (id is null)
+            {
+                return BadRequest();
+            }
+            
+            var api = context.Apis
+                .Include(a => a.User)
+                .First(a => a.Key.Equals(key));
+
+            var conversion = context.Conversions.FirstOrDefault(c => c.Id == id);
+
+            if (conversion is null)
+            {
+                return NotFound();
+            }
+
+            if (conversion.UserId != api.UserId)
+            {
+                return StatusCode(403);
+            }
+
+            var result = new
+            {
+                Initial = compress.Decompress(conversion.Initial),
+                Result = compress.Decompress(conversion.Result)
+            };
+
             return Content(JsonConvert.SerializeObject(result), "application/json");
         }
     }
