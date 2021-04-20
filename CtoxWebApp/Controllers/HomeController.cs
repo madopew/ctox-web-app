@@ -44,9 +44,8 @@ namespace CtoxWebApp.Controllers
 
             var result = await apiController.Parse(request.Type == ParseType.Json, new ParseRequest
             {
-                Key = api.Key,
                 Data = request.Data
-            });
+            }, api.Key);
             
             return result;
         }

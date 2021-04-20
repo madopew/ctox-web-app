@@ -1,8 +1,10 @@
 using System;
 using System.Data.Entity;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using CtoxWebApp.Attributes.Filters;
 using CtoxWebApp.DAL;
 using CtoxWebApp.Models.ApiModel.Domain;
 using CtoxWebApp.Services.Implementations;
@@ -13,6 +15,7 @@ using Newtonsoft.Json;
 
 namespace CtoxWebApp.Controllers
 {
+    [ServiceFilter(typeof(ApiKey))]
     [Route("api")]
     public class ApiController : ControllerBase
     {
@@ -83,23 +86,17 @@ namespace CtoxWebApp.Controllers
         }
 
         [HttpPost("parse")]
-        public async Task<IActionResult> Parse([FromQuery]bool? json, [FromBody]ParseRequest request)
+        public async Task<IActionResult> Parse([FromQuery]bool? json, [FromBody]ParseRequest request, [FromHeader(Name = "x-api-key")] string key)
         {
             if (request is null 
-                || string.IsNullOrWhiteSpace(request.Data)
-                || string.IsNullOrWhiteSpace(request.Key))
+                || string.IsNullOrWhiteSpace(request.Data))
             {
                 return BadRequest("Empty");
             }
 
             var api = context.Apis
                 .Include(a => a.User)
-                .FirstOrDefault(a => a.Key.Equals(request.Key));
-
-            if (api is null)
-            {
-                return Unauthorized();
-            }
+                .First(a => a.Key.Equals(key));
 
             if (!restriction.IsAllowedTimeout(api))
             {
@@ -132,27 +129,16 @@ namespace CtoxWebApp.Controllers
         }
 
         [HttpGet("history")]
-        public async Task<IActionResult> History([FromBody] History history)
+        public IActionResult History(int? skip, int? limit, [FromHeader(Name = "x-api-key")] string key)
         {
-            if (history is null
-                || string.IsNullOrWhiteSpace(history.Key))
-            {
-                return BadRequest("Empty");
-            }
-
             var api = context.Apis
                 .Include(a => a.User)
-                .FirstOrDefault(a => a.Key.Equals(history.Key));
-
-            if (api is null)
-            {
-                return Unauthorized();
-            }
-
+                .First(a => a.Key.Equals(key));
+            
             var conversions = context.Conversions
                 .Where(c => c.UserId == api.UserId)
-                .Skip(history.Skip)
-                .Take(history.Limit)
+                .Skip(skip ?? 0)
+                .Take(limit ?? 100)
                 .Select(c => new { c.Id, c.Time });
 
             var result = new { Amount = conversions.Count(), Data = conversions };
