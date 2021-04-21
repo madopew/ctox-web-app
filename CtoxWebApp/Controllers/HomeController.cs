@@ -77,6 +77,7 @@ namespace CtoxWebApp.Controllers
             return View(new ConversionUi
             {
                 HasKey = true,
+                Key = api.Key,
                 Amount = conversions.Count,
                 Conversions = conversions
             });

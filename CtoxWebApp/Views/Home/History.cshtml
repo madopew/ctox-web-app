@@ -1,3 +1,4 @@
+@using CtoxWebApp.Models.ApiModel.Domain
 @model CtoxWebApp.Models.ApiModel.View.ConversionUi
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers 
 
@@ -11,6 +12,11 @@
     if (Model.Amount != 0)
     {
         <div class="history-container">
+            <div class="popup-container hidden" onclick="closePopup()">
+                <div class="popup-view">
+                    <span>hello there</span>
+                </div>
+            </div>
             <div class="disclaimer">
                 <span>Showing only last @Model.Amount conversion(s).</span>
                 <span>For more detailed search navigate to <a asp-action="Api" asp-controller="Home">api section</a>.</span>
@@ -18,20 +24,27 @@
             <div class="history">
                 <table>
                     <tr class="history-header">
-                        <td>Date</td>
-                        <td>Time</td>
-                        <td>Parsing type</td>
-                        <td>Display action</td>
+                        <th>Date</th>
+                        <th>Time</th>
+                        <th class="header-action">Parsing type</th>
+                        <th class="header-action">Display action</th>
                     </tr>
-                
-                    @foreach (var el in Model.Conversions)
-                    {
-                        <tr class="history-element">
-                            <td>@el.Time.ToShortDateString()</td>
-                            <td>@el.Time.ToShortTimeString()</td>
-                            <td>@el.Type.ToString()</td>
-                            <td><button class="history-button" onclick="display(@el.Id)">View</button></td>
-                        </tr>
+
+                    @{
+                        var prev = DateTime.MinValue.ToShortDateString();
+                        foreach (var el in Model.Conversions)
+                        {
+                            var temp = el.Time.ToShortDateString();
+                            var date = temp.Equals(prev) ? string.Empty : temp;
+                            prev = temp;
+                            var type = el.Type;
+                            <tr class="history-element">
+                                <td>@date</td>
+                                <td>@el.Time.ToShortTimeString()</td>
+                                <td class="@(type == ParseType.Xml ? "xml" : "json")">@type.ToString()</td>
+                                <td class="button-element"><button class="history-button" onclick="display(@el.Id)">View</button></td>
+                            </tr>
+                        }
                     }
                 </table>
             </div>
@@ -39,7 +52,20 @@
         
         <script>
         display = (id) => {
-            console.log(id);
+            $.ajax({
+                url: "@Url.Action("View", "Api")?id=" + id,
+                type: "GET",
+                headers: {
+                    "x-api-key": "@Model.Key" 
+                },
+                success: function (data) {
+                    console.log(data);
+                }
+            });
+        }
+        
+        closePopup = () => {
+            $(".popup-container").addClass("hidden");
         }
         </script>
     }
@@ -56,7 +82,7 @@ else
     <div class="nokey-banner">
         <i class="fa fa-unlock-alt" aria-hidden="true"></i>
         <span>No api key associated with this account.</span>
-        <span>You can uptain one in the api section.</span>
+        <span>You can obtain one in the api section.</span>
         <a asp-action="Api" asp-controller="Home">Go to api</a>
     </div>
 }
