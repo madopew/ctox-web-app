@@ -1,4 +1,158 @@
+@using CtoxWebApp.Models.ApiModel.Domain
+@model CtoxWebApp.Models.ApiModel.View.ConversionUi
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers 
+
 @{
     ViewData["title"] = "History";
     Layout = "_Home";
+}
+
+@if (Model.HasKey)
+{
+    if (Model.Amount != 0)
+    {
+        <div class="history-container">
+            <div class="popup-container hidden" onclick="closePopup()">
+                <div class="popup-loading"></div>
+                <div class="popup-view hidden">
+                    <span>C code</span>
+                    <div class="conversion-area">
+                        <textarea id="conversion-content"></textarea>
+                    </div>
+                    <span>Parsing result</span>
+                    <div class="conversion-area">
+                        <textarea id="conversion-result"></textarea>
+                    </div>
+                </div>
+            </div>
+            <div class="disclaimer">
+                <span>Showing only last @Model.Amount conversion(s).</span>
+                <span>For more detailed search navigate to <a asp-action="Api" asp-controller="Home">api section</a>.</span>
+            </div>
+            <div class="history">
+                <table>
+                    <tr class="history-header">
+                        <th>Date</th>
+                        <th>Time</th>
+                        <th class="header-action">Parsing type</th>
+                        <th class="header-action">Display action</th>
+                    </tr>
+
+                    @{
+                        var prev = DateTime.MinValue.ToShortDateString();
+                        foreach (var el in Model.Conversions)
+                        {
+                            var temp = el.Time.ToShortDateString();
+                            var date = temp.Equals(prev) ? string.Empty : temp;
+                            prev = temp;
+                            var type = el.Type;
+                            <tr class="history-element">
+                                <td>@date</td>
+                                <td>@el.Time.ToShortTimeString()</td>
+                                <td class="@(type == ParseType.Xml ? "xml" : "json")">@type.ToString()</td>
+                                <td class="button-element">
+                                    <button class="history-button" onclick="display(@el.Id)">View</button>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </table>
+            </div>
+        </div>
+
+        <script>
+        $(".popup-view").on("click", e => e.stopPropagation());
+        
+        let textContent = document.getElementById("conversion-content");
+        let editorContent = CodeMirror.fromTextArea(textContent, {
+            mode:  "text/x-csrc",
+            indentUnit: 4,
+            theme: "eclipse",
+            readOnly: "nocursor"
+        });
+        
+        let textResult = document.getElementById("conversion-result");
+        let editorResult = CodeMirror.fromTextArea(textResult, {
+            mode:  "text/xml",
+            indentUnit: 4,
+            theme: "eclipse",
+            readOnly: "nocursor"
+        });
+            
+        display = (id) => {
+            $(".popup-container").removeClass("hidden");
+            $(".popup-loading").removeClass("hidden");
+            $(".popup-view").addClass("hidden");
+            $.ajax({
+                url: "@Url.Action("View", "Api")?id=" + id,
+                type: "GET",
+                headers: {
+                    "x-api-key": "@Model.Key" 
+                },
+                success: function (data) {
+                    editorContent.setValue(data.Initial);
+                    if (data.Result.charAt(0) === '{') {
+                        let result = JSON.stringify(JSON.parse(data.Result), null, 4);
+                        editorResult.setValue(result);
+                        editorResult.setOption("mode", "application/ld+json");
+                    } else {
+                        let result = data.Result;
+                        result = new XmlBeautify()
+                            .beautify(result, {
+                                indent: "    "
+                            });
+                        editorResult.setValue(result);
+                        editorResult.setOption("mode", "text/xml");
+                    }
+                    
+                    setTimeout(() => {
+                        editorContent.refresh();
+                        editorResult.refresh();
+                    }, 1);
+                    $(".popup-loading").addClass("hidden");
+                    $(".popup-view").removeClass("hidden");             
+                },
+                error: function () {
+                    $(".popup-container").addClass("hidden");
+                   showErrorMessage("An error occured while loading conversion info. Please, try again later.");
+                }
+            });
+        }
+        
+        closePopup = () => {
+            $(".popup-container").addClass("hidden");
+        }
+        </script>
+    }
+    else
+    {
+        <div class="empty-banner">
+            <i class="fa fa-file-code-o" aria-hidden="true"></i>
+            <span>So clean. Such empty.</span>
+        </div>
+    }
+}
+else
+{
+    <div class="nokey-banner">
+        <i class="fa fa-unlock-alt" aria-hidden="true"></i>
+        <span>No api key associated with this account.</span>
+        <span>You can obtain one in the api section.</span>
+        <a asp-action="Api" asp-controller="Home">Go to api</a>
+    </div>
+}
+
+@section head {
+    <link rel="stylesheet" href="~/css/Home/history.css">
+    <script
+        src="https://code.jquery.com/jquery-3.6.0.min.js"
+        integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xml-beautify@1.1.1/dist/XmlBeautify.js"></script>
+    <script src="~/lib/codemirror-5.60.0/lib/codemirror.js"></script>
+    <link rel="stylesheet" href="~/lib/codemirror-5.60.0/lib/codemirror.css">
+    <link rel="stylesheet" href="~/lib/codemirror-5.60.0/theme/eclipse.css">
+    <script src="~/lib/codemirror-5.60.0/mode/clike/clike.js"></script>
+    <script src="~/lib/codemirror-5.60.0/mode/xml/xml.js"></script>
+    <script src="~/lib/codemirror-5.60.0/mode/javascript/javascript.js"></script>
 }

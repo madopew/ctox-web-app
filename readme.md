@@ -3,6 +3,7 @@ Application with web UI and Rest API to parse program written in C99.
 It includes:
 - Authorization
 - Authentication
+- REST Api
 - Semi good-looking UI
 
 ## Creator

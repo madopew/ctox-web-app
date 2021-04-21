@@ -1,3 +1,4 @@
+using CtoxWebApp.Attributes.Filters;
 using CtoxWebApp.DAL;
 using CtoxWebApp.Services.Implementations;
 using CtoxWebApp.Services.Implementations.Mocks;
@@ -33,6 +34,7 @@ namespace CtoxWebApp
             services.AddTransient<IHashService, HashService>();
             services.AddTransient<IStringCompressService, GzipCompressService>();
             services.AddTransient<IParseService, ParseMock>();
+            services.AddTransient<ApiKey>();
             services.AddSingleton<IEmailSenderService, EmailSenderService>();
             services.AddSingleton<RestrictionService>();
 

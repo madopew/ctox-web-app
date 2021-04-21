@@ -1,9 +1,8 @@
-﻿@using CtoxWebApp.Models.ApiModel.View
+﻿@using CtoxWebApp.Models.ApiModel.Domain
 @{
     Layout = "_Home";
     ViewData["title"] = "Convert";
 }
-
 <div class="conversion-container">
     <div class="conversion-area">
         <textarea id="conversion-content">#include &lt;stdio.h&gt;&#13;&#10;&#13;&#10;int main() {&#13;&#10;    printf("%s\n", "Hello world!");&#13;&#10;    return 0;&#13;&#10;}</textarea>
@@ -23,7 +22,6 @@
 </div>
 
 <script>
-   
     let textContent = document.getElementById("conversion-content");
     let editorContent = CodeMirror.fromTextArea(textContent, {
         mode:  "text/x-csrc",
@@ -71,16 +69,16 @@
             error: function (data) {
                 switch (data.status) {
                     case 400:
-                        alert("Code is empty!");
+                        showErrorMessage("Code is empty!");
                         break;
                     case 401:
-                        alert("You don't have an api key!");
+                        showErrorMessage("You don't have an api key!");;
                         break;
                     case 429:
-                        alert("Too many requests!");
+                         showErrorMessage("Too many requests!");
                         break;
                     case 405:
-                        alert("Code size is too big!");
+                         showErrorMessage("Code size is too big!");
                         break;
                 }
                 editorResult.setValue("");
