@@ -71,6 +71,7 @@ namespace CtoxWebApp.Controllers
 
             var conversions = context.Conversions
                 .Where(c => c.UserId == api.UserId)
+                .OrderByDescending(c => c.Time)
                 .Take(HistoryMaxAmount)
                 .ToList();
 

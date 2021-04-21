@@ -1,4 +1,6 @@
+using System;
 using System.Linq;
+using System.Text;
 using CtoxWebApp.Services.Interfaces;
 
 namespace CtoxWebApp.Services.Implementations.Mocks
@@ -14,8 +16,14 @@ namespace CtoxWebApp.Services.Implementations.Mocks
 
         public string Parse(string content)
         {
-            var randomness = string.Concat(Enumerable.Repeat(hash.GetRandom(), 10));
-            return $"<text>{randomness}</text>";
+            var resultBuilder = new StringBuilder();
+
+            for (int i = 0; i < new Random().Next(10, 20); i++)
+            {
+                resultBuilder.Append($"<text>{hash.GetRandom()}</text>");
+            }
+
+            return $"<parse>{resultBuilder}</parse>";
         }
     }
 }

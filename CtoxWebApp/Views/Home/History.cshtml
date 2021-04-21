@@ -15,7 +15,14 @@
             <div class="popup-container hidden" onclick="closePopup()">
                 <div class="popup-loading"></div>
                 <div class="popup-view hidden">
-                    <span>hello there</span>
+                    <span>C code</span>
+                    <div class="conversion-area">
+                        <textarea id="conversion-content"></textarea>
+                    </div>
+                    <span>Parsing result</span>
+                    <div class="conversion-area">
+                        <textarea id="conversion-result"></textarea>
+                    </div>
                 </div>
             </div>
             <div class="disclaimer">
@@ -43,15 +50,35 @@
                                 <td>@date</td>
                                 <td>@el.Time.ToShortTimeString()</td>
                                 <td class="@(type == ParseType.Xml ? "xml" : "json")">@type.ToString()</td>
-                                <td class="button-element"><button class="history-button" onclick="display(@el.Id)">View</button></td>
+                                <td class="button-element">
+                                    <button class="history-button" onclick="display(@el.Id)">View</button>
+                                </td>
                             </tr>
                         }
                     }
                 </table>
             </div>
         </div>
-        
+
         <script>
+        $(".popup-view").on("click", e => e.stopPropagation());
+        
+        let textContent = document.getElementById("conversion-content");
+        let editorContent = CodeMirror.fromTextArea(textContent, {
+            mode:  "text/x-csrc",
+            indentUnit: 4,
+            theme: "eclipse",
+            readOnly: "nocursor"
+        });
+        
+        let textResult = document.getElementById("conversion-result");
+        let editorResult = CodeMirror.fromTextArea(textResult, {
+            mode:  "text/xml",
+            indentUnit: 4,
+            theme: "eclipse",
+            readOnly: "nocursor"
+        });
+            
         display = (id) => {
             $(".popup-container").removeClass("hidden");
             $(".popup-loading").removeClass("hidden");
@@ -63,16 +90,31 @@
                     "x-api-key": "@Model.Key" 
                 },
                 success: function (data) {
+                    editorContent.setValue(data.Initial);
+                    if (data.Result.charAt(0) === '{') {
+                        let result = JSON.stringify(JSON.parse(data.Result), null, 4);
+                        editorResult.setValue(result);
+                        editorResult.setOption("mode", "application/ld+json");
+                    } else {
+                        let result = data.Result;
+                        result = new XmlBeautify()
+                            .beautify(result, {
+                                indent: "    "
+                            });
+                        editorResult.setValue(result);
+                        editorResult.setOption("mode", "text/xml");
+                    }
+                    
+                    setTimeout(() => {
+                        editorContent.refresh();
+                        editorResult.refresh();
+                    }, 1);
                     $(".popup-loading").addClass("hidden");
-                    $(".popup-view").removeClass("hidden");
-                    console.log(data);
+                    $(".popup-view").removeClass("hidden");             
                 },
                 error: function () {
                     $(".popup-container").addClass("hidden");
                    showErrorMessage("An error occured while loading conversion info. Please, try again later.");
-                },
-                done: function () {
-                    
                 }
             });
         }
@@ -101,9 +143,16 @@ else
 }
 
 @section head {
-    <link rel="stylesheet" href="~/css/Home/history.css" >
+    <link rel="stylesheet" href="~/css/Home/history.css">
     <script
-            src="https://code.jquery.com/jquery-3.6.0.min.js"
-            integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
-            crossorigin="anonymous"></script>
+        src="https://code.jquery.com/jquery-3.6.0.min.js"
+        integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xml-beautify@1.1.1/dist/XmlBeautify.js"></script>
+    <script src="~/lib/codemirror-5.60.0/lib/codemirror.js"></script>
+    <link rel="stylesheet" href="~/lib/codemirror-5.60.0/lib/codemirror.css">
+    <link rel="stylesheet" href="~/lib/codemirror-5.60.0/theme/eclipse.css">
+    <script src="~/lib/codemirror-5.60.0/mode/clike/clike.js"></script>
+    <script src="~/lib/codemirror-5.60.0/mode/xml/xml.js"></script>
+    <script src="~/lib/codemirror-5.60.0/mode/javascript/javascript.js"></script>
 }

@@ -125,11 +125,6 @@
     align-items: center;
 }
 
-.popup-view {
-    background: white;
-    border-radius: 8px;
-}
-
 .popup-loading {
     background: transparent;
     border: 10px solid white;
@@ -143,4 +138,37 @@
 @keyframes spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
+}
+
+.popup-view {
+    max-height: 80%;
+    width: 80%;
+    overflow-y: auto;
+    background: white;
+    box-sizing: border-box;
+    padding: 1rem;
+}
+
+.popup-view span {
+    font-weight: 600;
+}
+
+.popup-view .conversion-area {
+    height: auto;
+    width: 100%;
+    position: relative;
+    margin-bottom: 1rem;
+}
+
+.popup-view .CodeMirror {
+    height: auto;
+    width: 100%;
+    top: 0;
+    left: 0;
+    background: rgba(0, 0, 0, 0.05);
+    border-radius: 5px;
+}
+
+.CodeMirror * {
+    font-family: Consolas, Menlo, Monaco, 'Lucida Console', 'Liberation Mono', 'DejaVu Sans Mono', 'Bitstream Vera Sans Mono', 'Courier New', monospace, serif, monospace;
 }
