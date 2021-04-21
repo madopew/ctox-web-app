@@ -13,7 +13,8 @@
     {
         <div class="history-container">
             <div class="popup-container hidden" onclick="closePopup()">
-                <div class="popup-view">
+                <div class="popup-loading"></div>
+                <div class="popup-view hidden">
                     <span>hello there</span>
                 </div>
             </div>
@@ -52,6 +53,9 @@
         
         <script>
         display = (id) => {
+            $(".popup-container").removeClass("hidden");
+            $(".popup-loading").removeClass("hidden");
+            $(".popup-view").addClass("hidden");
             $.ajax({
                 url: "@Url.Action("View", "Api")?id=" + id,
                 type: "GET",
@@ -59,7 +63,16 @@
                     "x-api-key": "@Model.Key" 
                 },
                 success: function (data) {
+                    $(".popup-loading").addClass("hidden");
+                    $(".popup-view").removeClass("hidden");
                     console.log(data);
+                },
+                error: function () {
+                    $(".popup-container").addClass("hidden");
+                    alert("An error occured while loading conversion info. Please, try again later.");
+                },
+                done: function () {
+                    
                 }
             });
         }
