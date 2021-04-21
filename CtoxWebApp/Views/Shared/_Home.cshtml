@@ -37,8 +37,16 @@
         <a asp-action="Logout" class="menu-element" asp-controller="Auth">Logout</a>
     </div>
     <div class="content">
+        <div class="content-error hidden">hello there</div>
         @RenderBody()
     </div>
 </main>
+<script >
+function showErrorMessage(msg) {
+    $(".content-error").text(msg);
+    $(".content-error").removeClass("hidden");
+    setTimeout(() => {$(".content-error").addClass("hidden");}, 5000);
+}
+</script>
 </body>
 </html>

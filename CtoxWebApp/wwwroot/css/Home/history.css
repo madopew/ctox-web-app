@@ -110,10 +110,6 @@
     color: var(--secondary);
 }
 
-.hidden {
-    display: none !important;
-}
-
 .popup-container {
     position: absolute;
     top: 0;

@@ -45,10 +45,6 @@
     font-size: 1.2rem;
 }
 
-.hidden {
-    display: none !important;
-}
-
 .loader-container {
     position: absolute;
     top: 0;
