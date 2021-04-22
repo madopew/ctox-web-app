@@ -62,6 +62,7 @@ namespace CtoxWebApp.Controllers
         }
 
         [Authorize]
+        [AllowNoApi]
         [HttpGet("create")]
         public async Task<IActionResult> Create([FromServices]IHashService hash)
         {

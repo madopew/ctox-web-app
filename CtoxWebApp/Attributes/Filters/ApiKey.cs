@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using CtoxWebApp.DAL;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace CtoxWebApp.Attributes.Filters
@@ -17,6 +18,14 @@ namespace CtoxWebApp.Attributes.Filters
         
         public void OnActionExecuting(ActionExecutingContext context)
         {
+            if ((context.ActionDescriptor as ControllerActionDescriptor)
+                .MethodInfo
+                .GetCustomAttributes(typeof(AllowNoApi), false)
+                .FirstOrDefault() != null)
+            {
+                return;
+            }
+
             if (!context.HttpContext.Request.Headers.ContainsKey("x-api-key"))
             {
                 context.Result = new UnauthorizedResult();
