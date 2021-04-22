@@ -12,7 +12,6 @@ Migrations/
 
 # Sensitive
 secretsettings.json
-docker-compose.yml
 
 # User-specific files
 *.rsuser
