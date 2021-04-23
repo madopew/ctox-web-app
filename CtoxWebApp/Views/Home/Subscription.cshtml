@@ -1,0 +1,73 @@
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers 
+@using CtoxWebApp.Models.UserModel.Domain
+@{
+    ViewData["title"] = "Subscription";
+    Layout = "_Home";
+}
+
+@if (!User.IsInRole(Role.Regular.ToString()))
+{
+    <div class="subscription-banner">
+        <i class="fa fa-money" aria-hidden="true"></i>
+        <span>
+            @if (User.IsInRole(Role.Admin.ToString()))
+            {
+                <text>Thanks for being a super cool admin!</text>
+            }
+            else
+            {
+                <text>Thanks for choosing our service, @User.Identity.Name!</text>
+            }
+        </span>
+        @if (User.IsInRole(Role.Super.ToString()))
+        {
+            <a asp-action="Unsubscribe" asp-controller="Home">Unsubscribe</a>
+        }
+    </div>
+}
+else
+{
+    <div class="subscription-container">
+        <div class="subscription-disclaimer">
+            <span>Our service adheres to the rule of <span class="highlight">free knowledge</span> and we try to spread it to the best of our ability.</span> 
+            <span>However, due to the possible heavy workload of the parsing service, there are some <span class="highlight">restrictions</span> on its use.</span> 
+            <span>For an ordinary user, these restrictions should not bring any inconvenience, however,</span> 
+            <span>for a small <span class="highlight">donation</span> to the development team, they can be reduced.</span> 
+        </div>
+        <div class="subscription-plans">
+            <div class="regular subscription">
+                <div class="subscription-header">
+                    <span class="subscription-title">Regular</span>
+                    <span class="subscription-cost">Free</span>
+                </div>
+                <div class="subscription-info">
+                    <span class="subscription-inc">Web UI</span>
+                    <span class="subscription-inc">Full history view</span>
+                    <span class="subscription-inc">JSON and XML output</span>
+                    <span class="subscription-inc">Api access</span>
+                    <span class="subscription-bad">~ @ViewData["regular-timeout"]min parsing cooldown</span>
+                    <span class="subscription-bad">~ @ViewData["regular-size"]kb max size</span>
+                </div>
+            </div>
+            <div class="super subscription">
+                <div class="subscription-header">
+                    <span class="subscription-title">Pro</span>
+                    <span class="subscription-cost">25<i class="fa fa-usd" aria-hidden="true"></i></span>
+                </div>
+                <div class="subscription-info">
+                    <span class="subscription-inc">Web UI</span>
+                    <span class="subscription-inc">Full history view</span>
+                    <span class="subscription-inc">JSON and XML output</span>
+                    <span class="subscription-inc">Api access</span>
+                    <span class="subscription-good">+ @ViewData["super-timeout"]min parsing cooldown</span>
+                    <span class="subscription-good">+ @ViewData["super-size"]kb max size</span>
+                </div>
+                <a asp-action="Upgrade" asp-controller="Home">Upgrade</a>
+            </div>
+        </div>
+    </div>
+}
+
+@section head {
+    <link rel="stylesheet" href="~/css/Home/subscription.css" >
+}

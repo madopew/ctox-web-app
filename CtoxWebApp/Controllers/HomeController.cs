@@ -1,9 +1,15 @@
 ﻿using System.Data.Entity;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using CtoxWebApp.DAL;
+using CtoxWebApp.Extensions;
 using CtoxWebApp.Models.ApiModel.Domain;
 using CtoxWebApp.Models.ApiModel.View;
+using CtoxWebApp.Models.UserModel.Domain;
+using CtoxWebApp.Services.Implementations;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -84,9 +90,45 @@ namespace CtoxWebApp.Controllers
             });
         }
 
-        public IActionResult Balance()
+        public IActionResult Subscription([FromServices] RestrictionService restriction)
         {
+            ViewData["regular-timeout"] = restriction.RegularTimeout;
+            ViewData["super-timeout"] = restriction.SuperTimeout;
+            ViewData["regular-size"] = restriction.RegularSize;
+            ViewData["super-size"] = restriction.SuperSize;
             return View();
+        }
+
+        public async Task<IActionResult> Unsubscribe()
+        {
+            var user = context.Users.First(u => u.Username.Equals(User.Identity.Name));
+            if (user.Role != Role.Admin)
+            {
+                user.Role = Role.Regular;
+                var id = User;
+                ((ClaimsIdentity) User.Identity).UpdateClaim(ClaimsIdentity.DefaultRoleClaimType, Role.Regular.ToString());
+                await HttpContext.SignOutAsync();
+                await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, id);
+                await context.SaveChangesAsync();
+            }
+
+            return RedirectToAction("Subscription");
+        }
+
+        public async Task<IActionResult> Upgrade()
+        {
+            var user = context.Users.First(u => u.Username.Equals(User.Identity.Name));
+            if (user.Role == Role.Regular)
+            {
+                user.Role = Role.Super;
+                var id = User;
+                ((ClaimsIdentity) User.Identity).UpdateClaim(ClaimsIdentity.DefaultRoleClaimType, Role.Super.ToString());
+                await HttpContext.SignOutAsync();
+                await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, id);
+                await context.SaveChangesAsync();
+            }
+
+            return RedirectToAction("Subscription");
         }
 
         public IActionResult Api()

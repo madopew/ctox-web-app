@@ -1,0 +1,140 @@
+.subscription-banner {
+    box-sizing: border-box;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.subscription-banner i {
+    font-size: 10rem;
+}
+
+.subscription-banner span {
+    font-size: 1.2rem;
+}
+
+.subscription-banner a {
+    font-size: 1rem;
+    color: var(--primary);
+    border-bottom: 1px solid var(--primary);
+    margin-top: 1.5rem;
+}
+
+.subscription-container {
+    width: 100%;
+    box-sizing: border-box;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    padding: 2rem;
+}
+
+.subscription-disclaimer {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 3rem;
+}
+
+.subscription-disclaimer span {
+    font-size: 1.3rem;
+}
+
+.subscription-disclaimer .highlight {
+    font-weight: 500;
+    color: var(--secondary);
+}
+
+.subscription-plans {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
+
+.subscription {
+    width: 20%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background: white;
+    box-shadow: 0 0 5px 2px rgba(0,0,0,0.1);
+    margin-right: 3rem;
+}
+
+.subscription-header {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    font-weight: 500;
+    padding: 2rem 1rem 2rem 1rem;
+    box-sizing: border-box;
+}
+
+.subscription-header .subscription-title {
+    color: white;
+    font-weight: 600;
+    font-size: 1.5rem;
+}
+
+.subscription-header .subscription-cost {
+    color: white;
+    font-size: 1.2rem;
+}
+
+.subscription-cost i {
+    color: white;
+}
+
+.regular .subscription-header {
+    background: #62ddae;
+}
+
+.super .subscription-header {
+    background: #56a8fe;
+}
+
+.subscription-info {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 1rem 1rem 0 1rem;
+}
+
+.subscription-info * {
+    margin-bottom: 1rem;
+}
+
+.subscription-info i {
+    font-weight: 400;
+}
+
+.subscription-info:last-child {
+    margin-bottom: 0;
+}
+
+.subscription-info .subscription-bad {
+    color: var(--darker-light);
+}
+
+.subscription-info .subscription-good {
+    color: var(--secondary);
+}
+
+.subscription a {
+    background: var(--secondary);
+    color: white;
+    font-weight: 500;
+    padding: 0.5rem 1rem 0.5rem 1rem;
+    border-radius: 7px;
+    margin-bottom: 1rem;
+}
