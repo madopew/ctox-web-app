@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using CtoxWebApp.DAL;
 using CtoxWebApp.Models.ApiModel.Domain;
 using CtoxWebApp.Models.ApiModel.View;
+using CtoxWebApp.Services.Implementations;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -84,8 +85,12 @@ namespace CtoxWebApp.Controllers
             });
         }
 
-        public IActionResult Balance()
+        public IActionResult Balance([FromServices] RestrictionService restriction)
         {
+            ViewData["regular-timeout"] = restriction.RegularTimeout;
+            ViewData["super-timeout"] = restriction.SuperTimeout;
+            ViewData["regular-size"] = restriction.RegularSize;
+            ViewData["super-size"] = restriction.SuperSize;
             return View();
         }
 

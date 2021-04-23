@@ -23,6 +23,11 @@ namespace CtoxWebApp.Services.Implementations
             }
         }
 
+        public int RegularTimeout => timeouts[(int) Role.Regular].Minutes;
+        public int SuperTimeout => timeouts[(int) Role.Super].Minutes;
+        public int RegularSize => maxSizes[(int) Role.Regular];
+        public int SuperSize => maxSizes[(int) Role.Super];
+
         public bool IsAllowedTimeout(Api api)
         {
             var diff = DateTime.Now - api.LastUsed;
