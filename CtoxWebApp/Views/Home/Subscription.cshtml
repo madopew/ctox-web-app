@@ -1,0 +1,35 @@
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers 
+@using CtoxWebApp.Models.UserModel.Domain
+@{
+    ViewData["title"] = "Subscription";
+    Layout = "_Home";
+}
+
+@if (!User.IsInRole(Role.Regular.ToString()))
+{
+    <div class="subscription-banner">
+        <i class="fa fa-money" aria-hidden="true"></i>
+        <span>
+            @if (User.IsInRole(Role.Admin.ToString()))
+            {
+                <text>Thanks for being a super cool admin!</text>
+            }
+            else
+            {
+                <text>Thanks for choosing our service, @User.Identity.Name!</text>
+            }
+        </span>
+        @if (User.IsInRole(Role.Super.ToString()))
+        {
+            <a asp-action="Unsubscribe" asp-controller="Home">Unsubscribe</a>
+        }
+    </div>
+}
+else
+{
+    <div>lox</div>
+}
+
+@section head {
+    <link rel="stylesheet" href="~/css/Home/subscription.css" >
+}

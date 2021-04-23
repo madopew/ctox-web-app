@@ -1,0 +1,24 @@
+.subscription-banner {
+    box-sizing: border-box;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.subscription-banner i {
+    font-size: 10rem;
+}
+
+.subscription-banner span {
+    font-size: 1.2rem;
+}
+
+.subscription-banner a {
+    font-size: 1rem;
+    color: var(--primary);
+    border-bottom: 1px solid var(--primary);
+    margin-top: 1.5rem;
+}
