@@ -34,6 +34,7 @@ namespace CtoxWebApp.Controllers
         private const string ContentTypeJson = "application/json";
         private const string ContentTypeXml = "application/xml";
         private const string ApiKeyHeader = "x-api-key";
+        private const int DefaultHistoryLimit = 100;
 
         private static readonly string TestResultJson = JsonConvert.SerializeXNode(XElement.Parse(TestResultText));
 
@@ -42,7 +43,8 @@ namespace CtoxWebApp.Controllers
         private readonly IParseService parse;
         private readonly IStringCompressService compress;
 
-        public ApiController(AppDbContext context, RestrictionService restriction, IParseService parse, IStringCompressService compress)
+        public ApiController(AppDbContext context, RestrictionService restriction, IParseService parse,
+            IStringCompressService compress)
         {
             this.context = context;
             this.restriction = restriction;
@@ -64,7 +66,7 @@ namespace CtoxWebApp.Controllers
         [Authorize]
         [AllowNoApi]
         [HttpGet("create")]
-        public async Task<IActionResult> Create([FromServices]IHashService hash)
+        public async Task<IActionResult> Create([FromServices] IHashService hash)
         {
             var user = context.Users.First(u => u.Username.Equals(HttpContext.User.Identity.Name));
             var api = context.Apis.FirstOrDefault(a => a.UserId == user.Id);
@@ -77,7 +79,7 @@ namespace CtoxWebApp.Controllers
                     LastUsed = DateTime.MinValue,
                     UserId = user.Id
                 };
-                
+
                 context.Apis.Add(api);
             }
             else
@@ -86,16 +88,16 @@ namespace CtoxWebApp.Controllers
             }
 
             await context.SaveChangesAsync();
-            return StatusCode(201, new { api.Key });
+            return StatusCode(201, new {api.Key});
         }
 
         [HttpPost("parse")]
         public async Task<IActionResult> Parse(
-            bool? json, 
-            [FromBody] ParseRequest request, 
+            bool? json,
+            [FromBody] ParseRequest request,
             [FromHeader(Name = ApiKeyHeader)] string key)
         {
-            if (request is null 
+            if (request is null
                 || string.IsNullOrWhiteSpace(request.Data))
             {
                 return BadRequest("Empty");
@@ -114,7 +116,7 @@ namespace CtoxWebApp.Controllers
             {
                 return StatusCode(405, "Size");
             }
-            
+
             api.LastUsed = DateTime.Now;
 
             var parseResult = parse.Parse(request.Data);
@@ -137,24 +139,30 @@ namespace CtoxWebApp.Controllers
         }
 
         [HttpGet("history")]
-        public IActionResult History(int? skip, int? limit, [FromHeader(Name = ApiKeyHeader)] string key)
+        public IActionResult History(
+            DateTime? day,
+            bool? ascending,
+            int? skip,
+            int? limit,
+            [FromHeader(Name = ApiKeyHeader)] string key)
         {
             var api = context.Apis
                 .Include(a => a.User)
                 .First(a => a.Key.Equals(key));
-            
-            var conversions = context.Conversions
-                .Where(c => c.UserId == api.UserId)
-                .Skip(skip ?? 0)
-                .Take(limit ?? 100)
-                .Select(c => new
-                {
-                    c.Id, 
-                    c.Time,
-                    c.Type
-                });
 
-            var result = new { Amount = conversions.Count(), Data = conversions };
+            var conversions = context.Conversions
+                .Where(c => c.UserId == api.UserId);
+
+            conversions = SearchConversions(conversions, day, ascending, skip, limit);
+
+            var data = conversions.Select(c => new
+            {
+                c.Id,
+                c.Time,
+                c.Type
+            });
+
+            var result = new {Amount = data.Count(), Data = data};
             return Content(JsonConvert.SerializeObject(result), ContentTypeJson);
         }
 
@@ -165,7 +173,7 @@ namespace CtoxWebApp.Controllers
             {
                 return BadRequest();
             }
-            
+
             var api = context.Apis
                 .Include(a => a.User)
                 .First(a => a.Key.Equals(key));
@@ -189,6 +197,35 @@ namespace CtoxWebApp.Controllers
             };
 
             return Content(JsonConvert.SerializeObject(result), ContentTypeJson);
+        }
+
+        private IQueryable<Conversion> SearchConversions(
+            IQueryable<Conversion> conversions,
+            DateTime? day,
+            bool? ascending,
+            int? skip,
+            int? limit)
+        {
+            if (day != null)
+            {
+                conversions = conversions.Where(c => c.Time.Date == ((DateTime) day).Date);
+            }
+
+            conversions = ascending == false ? 
+                conversions.OrderByDescending(c => c.Time) : 
+                conversions.OrderBy(c => c.Time);
+
+            if (skip != null)
+            {
+                conversions = conversions.Skip((int) skip);
+            }
+
+            if (limit != null)
+            {
+                conversions = conversions.Take((int) limit);
+            }
+
+            return conversions;
         }
     }
 }
