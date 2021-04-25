@@ -2,3 +2,119 @@
     ViewData["title"] = "Api";
     Layout = "_Home";
 }
+
+<div class="api-container">
+    <div class="api-key">
+        your api key
+    </div>
+    <div class="api-docs">
+        <div class="doc-sec">
+            <h2>Authentication</h2>
+            <div class="doc-sub">
+                <h3>Basics</h3>
+                <p>
+                    CTOX uses api key authetication. On every request to api endpoint you should include your api key
+                    in the header. You can get and regenerate yout api key in the section above. All unauthorized
+                    access will be blocked with 401 response code.
+                </p>
+            </div>
+            <div class="doc-sub">
+                <h3>Request example</h3>
+                <p>Each request should contain <span>x-api-key</span> header containing your api key.</p>
+                <span>x-api-key: THEREgoesYOURapiKEY</span>
+            </div>
+            <div class="doc-sub">
+                <h3>Errors</h3>
+                <p>Every unauthorized access (which include both: invalid api key and absence of header) returns 401 response code.</p>
+                <span>Status: 401 Unauthorized</span>
+            </div>
+        </div>
+        <div class="doc-sec">
+            <h2>Test</h2>
+            <span><span class="type">GET</span> /api/test</span>
+            <div class="doc-sub">
+                <h3>Basics</h3>
+                <p>
+                    You can test your connection to api server and/or your api key with this endpoint.
+                    On success some predefined payload will be sent with 200 status code.
+                </p>
+            </div>
+            <div class="doc-sub">
+                <h3>Parameters</h3>
+                <table>
+                    <tr>
+                        <th>Name</th>
+                        <th>Required</th>
+                        <th>Type</th>
+                        <th>In</th>
+                        <th>Description</th>
+                    </tr>
+                    <tr>
+                        <td><span>json</span></td>
+                        <td>no</td>
+                        <td>boolean</td>
+                        <td>query</td>
+                        <td>should response be in json format. default is false.</td>
+                    </tr>
+                </table>
+            </div>
+            <div class="doc-sub">
+                <h3>Request example</h3>
+                <span><span class="type">GET</span> https://ctox.com/api/test?json=false</span>
+            </div>
+        </div>
+        <div class="doc-sec">
+            <h2>Parse</h2>
+            <span><span class="type">POST</span> /api/parse</span>
+            <div class="doc-sub">
+                <h3>Basics</h3>
+                <p>
+                    Main api endpoint, used to parse C code. Attention: your api key is used to authenticate all
+                    actions made to this endpoint, thus restrictions are applied on service usage. In order
+                    to test your connection or api key use <span>/api/test</span>.
+                </p>
+            </div>
+            <div class="doc-sub">
+                <h3>Parameters</h3>
+                <table>
+                    <tr>
+                        <th>Name</th>
+                        <th>Required</th>
+                        <th>Type</th>
+                        <th>In</th>
+                        <th>Description</th>
+                    </tr>
+                    <tr>
+                        <td><span>json</span></td>
+                        <td>no</td>
+                        <td>boolean</td>
+                        <td>query</td>
+                        <td>should response be in json format. default is false.</td>
+                    </tr>
+                    <tr>
+                        <td><span>data</span></td>
+                        <td>yes</td>
+                        <td>string</td>
+                        <td>body</td>
+                        <td>c code to parse. should be escaped.</td>
+                    </tr>
+                </table>
+            </div>
+            <div class="doc-sub">
+                <h3>Request example</h3>
+                <span><span class="type">POST</span> https://ctox.com/api/parse?json=true</span>
+                <span>{ "data": "int main() { return 0; }" }</span>
+            </div>
+            <div class="doc-sub">
+                <h3>Errors</h3>
+                <p>400 response code - payload is empty (no c code)</p>
+                <p>429 responce code - timeout (too many requests, each account type has different timeout)</p>
+                <p>405 responce code - payload max size exceeded</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section head {
+    <link rel="stylesheet" href="~/css/Home/api.css">
+}
