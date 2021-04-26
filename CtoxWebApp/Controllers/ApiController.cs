@@ -34,7 +34,6 @@ namespace CtoxWebApp.Controllers
         private const string ContentTypeJson = "application/json";
         private const string ContentTypeXml = "application/xml";
         private const string ApiKeyHeader = "x-api-key";
-        private const int DefaultHistoryLimit = 100;
 
         private static readonly string TestResultJson = JsonConvert.SerializeXNode(XElement.Parse(TestResultText));
 
@@ -180,14 +179,9 @@ namespace CtoxWebApp.Controllers
 
             var conversion = context.Conversions.FirstOrDefault(c => c.Id == id);
 
-            if (conversion is null)
+            if (conversion is null || conversion.UserId != api.UserId)
             {
                 return NotFound();
-            }
-
-            if (conversion.UserId != api.UserId)
-            {
-                return StatusCode(403);
             }
 
             var result = new
