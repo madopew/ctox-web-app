@@ -108,8 +108,110 @@
             <div class="doc-sub">
                 <h3>Errors</h3>
                 <p>400 response code - payload is empty (no c code)</p>
-                <p>429 responce code - timeout (too many requests, each account type has different timeout)</p>
-                <p>405 responce code - payload max size exceeded</p>
+                <p>429 response code - timeout (too many requests, each account type has different timeout)</p>
+                <p>405 response code - payload max size exceeded</p>
+            </div>
+        </div>
+        <div class="doc-sec">
+            <h2>History</h2>
+            <span><span class="type">GET</span> /api/history</span>
+            <div class="doc-sub">
+                <h3>Basics</h3>
+                <p>
+                    This method allows to view all previously made requests to parsing service via <span>/api/parse</span>.
+                    Every program code and result tree is stored in zipped version, so in order to view the contents you shall use <span>/api/view</span>.
+                    Additional parameters extend this method to be more specific, see parameters section.
+                </p>
+            </div>
+            <div class="doc-sub">
+                <h3>Parameters</h3>
+                <p>
+                    Parameters extend this method to more specific search function.
+                    Important: parameters are applied to output history in this specific order:
+                </p> 
+                <p><b>day -> ascending -> skip -> limit</b></p>
+                <p>Ignoring this order may lead to undefined result.</p>
+                <table>
+                    <tr>
+                        <th>Name</th>
+                        <th>Required</th>
+                        <th>Type</th>
+                        <th>In</th>
+                        <th>Description</th>
+                    </tr>
+                    <tr>
+                        <td><span>day</span></td>
+                        <td>no</td>
+                        <td><span>yyyy-MM-dd</span> format date</td>
+                        <td>query</td>
+                        <td><b>date</b> of the request. no time included. default is any.</td>
+                    </tr>
+                    <tr>
+                        <td><span>ascending</span></td>
+                        <td>no</td>
+                        <td>boolean</td>
+                        <td>query</td>
+                        <td>should be result ordered by ascending date. default is true.</td>
+                    </tr>
+                    <tr>
+                        <td><span>skip</span></td>
+                        <td>no</td>
+                        <td>integer</td>
+                        <td>query</td>
+                        <td>how many requests should be skipped in result. default is 0.</td>
+                    </tr>
+                    <tr>
+                        <td><span>limit</span></td>
+                        <td>no</td>
+                        <td>integer</td>
+                        <td>query</td>
+                        <td>maximum amount of requests. default is infinity.</td>
+                    </tr>
+                </table>
+            </div>
+            <div class="doc-sub">
+                <h3>Request example</h3>
+                <span><span class="type">GET</span> https://ctox.com/api/history?ascending=false&skip=3</span>
+            </div>
+        </div>
+        <div class="doc-sec">
+            <h2>View</h2>
+            <span><span class="type">GET</span> /api/view</span>
+            <div class="doc-sub">
+                <h3>Basics</h3>
+                <p>
+                    Allows to view content of particular request in unzipped format. Original parsing type (xml or json)
+                    and indentation is preserved. In order to use this method you shall obtain id
+                    of the request via <span>/api/history</span>.
+                </p>
+            </div>
+            <div class="doc-sub">
+                <h3>Parameters</h3>
+                <table>
+                    <tr>
+                        <th>Name</th>
+                        <th>Required</th>
+                        <th>Type</th>
+                        <th>In</th>
+                        <th>Description</th>
+                    </tr>
+                    <tr>
+                        <td><span>id</span></td>
+                        <td>yes</td>
+                        <td>integer</td>
+                        <td>query</td>
+                        <td>id of the request.</td>
+                    </tr>
+                </table>
+            </div>
+            <div class="doc-sub">
+                <h3>Request example</h3>
+                <span><span class="type">GET</span> https://ctox.com/api/view?id=3</span>
+            </div>
+            <div class="doc-sub">
+                <h3>Errors</h3>
+                <p>400 response code - no id is supplied</p>
+                <p>404 response code - id is invalid (either no request with such id was made or it doesnt belong to specific user)</p>
             </div>
         </div>
     </div>

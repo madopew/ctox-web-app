@@ -18,6 +18,7 @@ namespace CtoxWebApp.Attributes.Filters
         
         public void OnActionExecuting(ActionExecutingContext context)
         {
+            // ReSharper disable once PossibleNullReferenceException
             if ((context.ActionDescriptor as ControllerActionDescriptor)
                 .MethodInfo
                 .GetCustomAttributes(typeof(AllowNoApi), false)
