@@ -1,11 +1,30 @@
 @{
     ViewData["title"] = "Api";
     Layout = "_Home";
+    string apiKey = ViewData["api-key"] as string;
 }
 
 <div class="api-container">
     <div class="api-key">
-        your api key
+        <h2>Your api key</h2>
+        <div class="api-getter">
+            <div class="api-input">
+                <div class="api-key-input">
+                    <span>
+                        @if(apiKey.Length == 0)
+                        {
+                            <text>you don't have an api key</text>
+                        }
+                        else
+                        {
+                            <text>@apiKey</text>
+                        }
+                    </span>
+                </div>
+                <button title="Copy" onclick="copyApiKey()"><i class="fa fa-clipboard" aria-hidden="true"></i></button>
+            </div>
+            <button id="generate-button" class="filled" onclick="regenerateApiKey()">Generate</button>
+        </div>
     </div>
     <div class="api-docs">
         <div class="doc-sec">
@@ -217,6 +236,41 @@
     </div>
 </div>
 
+<script>
+    function copyApiKey() {
+        let copyText = $(".api-key-input span").text();
+        if (copyText.length === 0) return;
+        let textArea = document.createElement("textarea");
+        textArea.value = copyText;
+        document.body.appendChild(textArea);
+        textArea.select();
+        document.execCommand("Copy");
+        textArea.remove();
+        showInfoMessage("Copied");
+    }
+
+    function regenerateApiKey() {
+        let prevText = $("#generate-button").text();
+        $("#generate-button").html('<i class="fa fa-refresh fa-spin"></i>');
+
+        $.ajax({
+            url: "@Url.Action("Create", "Api")",
+            type: "GET",
+            success: function (data) {
+                $(".api-key-input span").text(data.key);
+            },
+            complete: function() {
+                $("#generate-button").html(prevText);
+            }
+        });
+    }
+</script>
+
 @section head {
+    <script
+        src="https://code.jquery.com/jquery-3.6.0.min.js"
+        integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
+        crossorigin="anonymous"></script>
     <link rel="stylesheet" href="~/css/Home/api.css">
+    <link rel="stylesheet" href="~/lib/font-awesome-4.7.0/css/font-awesome.min.css">
 }

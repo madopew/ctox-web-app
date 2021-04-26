@@ -133,6 +133,11 @@ namespace CtoxWebApp.Controllers
 
         public IActionResult Api()
         {
+            var api = context.Apis
+                .Include(a => a.User)
+                .FirstOrDefault(a => a.User.Username.Equals(User.Identity.Name));
+
+            ViewData["api-key"] = api is null ? string.Empty : api.Key;
             return View();
         }
 

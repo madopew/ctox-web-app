@@ -70,6 +70,7 @@ main .content {
     justify-content: flex-start;
     align-items: flex-start;
     background: var(--light);
+    overflow-y: auto;
 }
 
 .hidden {
