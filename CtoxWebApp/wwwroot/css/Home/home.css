@@ -76,7 +76,7 @@ main .content {
     display: none !important;
 }
 
-.content-error {
+.content-banner {
     width: 100%;
     box-sizing: border-box;
     display: flex;
@@ -87,5 +87,12 @@ main .content {
     font-weight: 500;
     font-size: 1.1rem;
     color: white;
-    background-color: var(--error);
+}
+
+.content-banner.error {
+    background: var(--error);
+}
+
+.content-banner.info {
+    background: var(--success);
 }
