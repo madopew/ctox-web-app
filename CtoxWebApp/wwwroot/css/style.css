@@ -28,6 +28,10 @@ button {
     cursor: pointer;
 }
 
+button i {
+    color: white;
+}
+
 button.filled {
     background: var(--primary);
     color: white;
