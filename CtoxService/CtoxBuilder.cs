@@ -2,7 +2,7 @@ using System;
 using System.IO;
 using System.Runtime.InteropServices;
 
-namespace Ctox
+namespace CtoxService
 {
     public class CtoxBuilder
     {
