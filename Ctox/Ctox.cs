@@ -1,3 +1,4 @@
+using System;
 using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
@@ -19,6 +20,13 @@ namespace Ctox
             this.command = command;
             this.inputPostfix = inputPostfix;
             this.outputPostfix = outputPostfix;
+        }
+
+        public static Ctox Create(Action<CtoxBuilder> builder)
+        {
+            var b = new CtoxBuilder();
+            builder(b);
+            return b.Build();
         }
 
         public string Parse(string content)

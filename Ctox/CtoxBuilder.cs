@@ -12,6 +12,10 @@ namespace Ctox
         private string inputPostfix = "_input";
         private string outputPostfix = "_output";
 
+        internal CtoxBuilder()
+        {
+        }
+
         public string BasePath
         {
             set => basePath = value;
@@ -37,7 +41,7 @@ namespace Ctox
             set => outputPostfix = value;
         }
 
-        public Ctox Build()
+        internal Ctox Build()
         {
             if (!Directory.Exists(basePath))
             {
