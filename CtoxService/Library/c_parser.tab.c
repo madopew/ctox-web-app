@@ -4205,6 +4205,5 @@ void yyerror(char *str) {
 }
 
 int main() {
-	freopen("./ctox.output.xml", "w", stdout);
     return yyparse();
 }
