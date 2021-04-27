@@ -1,7 +1,7 @@
 @{
     ViewData["title"] = "Api";
     Layout = "_Home";
-    string apiKey = ViewData["api-key"] as string;
+    var apiKey = ViewData["api-key"] as string ?? string.Empty;
 }
 
 <div class="api-container">
@@ -190,7 +190,7 @@
             </div>
             <div class="doc-sub">
                 <h3>Request example</h3>
-                <span><span class="type">GET</span> https://ctox.com/api/history?ascending=false&skip=3</span>
+                <span><span class="type">GET</span> https://ctox.com/api/history?ascending=false&amp;skip=3</span>
             </div>
         </div>
         <div class="doc-sec">

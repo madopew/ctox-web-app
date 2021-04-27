@@ -39,15 +39,15 @@ namespace CtoxWebApp.Controllers
 
         private readonly AppDbContext context;
         private readonly RestrictionService restriction;
-        private readonly IParseService parse;
+        private readonly IParseAsyncService parseAsync;
         private readonly IStringCompressService compress;
 
-        public ApiController(AppDbContext context, RestrictionService restriction, IParseService parse,
+        public ApiController(AppDbContext context, RestrictionService restriction, IParseAsyncService parseAsync,
             IStringCompressService compress)
         {
             this.context = context;
             this.restriction = restriction;
-            this.parse = parse;
+            this.parseAsync = parseAsync;
             this.compress = compress;
         }
 
@@ -118,7 +118,7 @@ namespace CtoxWebApp.Controllers
 
             api.LastUsed = DateTime.Now;
 
-            var parseResult = parse.Parse(request.Data);
+            var parseResult = await parseAsync.ParseAsync(request.Data);
             if (json == true)
             {
                 parseResult = JsonConvert.SerializeXNode(XElement.Parse(parseResult));

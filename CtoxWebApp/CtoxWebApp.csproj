@@ -236,4 +236,8 @@
     <Folder Include="wwwroot\lib" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\CtoxService\CtoxService.csproj" />
+  </ItemGroup>
+
 </Project>

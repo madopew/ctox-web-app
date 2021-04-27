@@ -1,7 +1,6 @@
 using CtoxWebApp.Attributes.Filters;
 using CtoxWebApp.DAL;
 using CtoxWebApp.Services.Implementations;
-using CtoxWebApp.Services.Implementations.Mocks;
 using CtoxWebApp.Services.Interfaces;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
@@ -33,8 +32,8 @@ namespace CtoxWebApp
             services.AddTransient(p => Configuration);
             services.AddTransient<IHashService, HashService>();
             services.AddTransient<IStringCompressService, GzipCompressService>();
-            services.AddTransient<IParseService, ParseMock>();
             services.AddTransient<ApiKey>();
+            services.AddSingleton<IParseAsyncService, ParseAsyncService>();
             services.AddSingleton<IEmailSenderService, EmailSenderService>();
             services.AddSingleton<RestrictionService>();
 
