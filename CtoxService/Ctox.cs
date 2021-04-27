@@ -7,50 +7,35 @@ namespace CtoxService
 {
     public class Ctox
     {
-        private readonly string basePath;
-        private readonly string name;
         private readonly string command;
-        private readonly string inputPostfix;
-        private readonly string outputPostfix;
-
-        internal Ctox(string basePath, string name, string command, string inputPostfix, string outputPostfix)
+        
+        public Ctox(string command)
         {
-            this.basePath = basePath;
-            this.name = name;
+            if (!File.Exists(command))
+            {
+                throw new ArgumentException("File doesn't exist. Check if it's compiled.");
+            }
+
             this.command = command;
-            this.inputPostfix = inputPostfix;
-            this.outputPostfix = outputPostfix;
-        }
-
-        public static Ctox Create(Action<CtoxBuilder> builder)
-        {
-            var b = new CtoxBuilder();
-            builder(b);
-            return b.Build();
         }
 
         public string Parse(string content)
         {
-            var inputFile = new FileStream($"{basePath}/{name}{inputPostfix}", FileMode.Create);
-            var writer = new StreamWriter(inputFile);
-            writer.Write(content);
-            writer.Close();
-            Process.Start($"{basePath}/{command}", $"< {name}{inputPostfix} > {name}{outputPostfix}");
-            var outputFile = new FileStream($"{basePath}/{name}{outputPostfix}", FileMode.Open);
-            using var reader = new StreamReader(outputFile);
-            return reader.ReadToEnd();
+            using var process = new Process();
+            process.StartInfo.FileName = command;
+            process.StartInfo.RedirectStandardInput = true;
+            process.StartInfo.RedirectStandardOutput = true;
+            process.Start();
+            process.StandardInput.Write(content);
+            process.StandardInput.Close();
+            var result = process.StandardOutput.ReadToEnd();
+            process.WaitForExit();
+            return result;
         }
 
         public Task<string> ParseAsync(string content)
         {
-            var inputFile = new FileStream($"{basePath}/{name}{inputPostfix}", FileMode.Create);
-            var writer = new StreamWriter(inputFile);
-            writer.WriteAsync(content);
-            writer.Close();
-            Process.Start($"{basePath}/{command}", $"< {name}{inputPostfix} > {name}{outputPostfix}");
-            var outputFile = new FileStream($"{basePath}/{name}{outputPostfix}", FileMode.Open);
-            using var reader = new StreamReader(outputFile);
-            return reader.ReadToEndAsync();
+            return Task.Run(() => Parse(content));
         }
     }
 }
