@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using CtoxWebApp.Attributes.Filters;
 using CtoxWebApp.DAL;
 using CtoxWebApp.Services.Implementations;
@@ -37,11 +38,16 @@ namespace CtoxWebApp
             services.AddSingleton<IEmailSenderService, EmailSenderService>();
             services.AddSingleton<RestrictionService>();
 
-            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+            services
+                .AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                 .AddCookie(o =>
                 {
                     o.LoginPath = new PathString("/Auth/Login");
-                    o.AccessDeniedPath = new PathString("/Home/Index");
+                    o.Events.OnRedirectToAccessDenied = context =>
+                    {
+                        context.Response.StatusCode = 404;
+                        return Task.CompletedTask;
+                    };
                 });
 
             services
