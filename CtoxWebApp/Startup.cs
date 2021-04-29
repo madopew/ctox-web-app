@@ -30,6 +30,8 @@ namespace CtoxWebApp
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddResponseCompression(o => o.EnableForHttps = true);
+
             services.AddTransient(p => Configuration);
             services.AddTransient<IHashService, HashService>();
             services.AddTransient<IStringCompressService, GzipCompressService>();
@@ -65,6 +67,8 @@ namespace CtoxWebApp
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            app.UseResponseCompression();
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
