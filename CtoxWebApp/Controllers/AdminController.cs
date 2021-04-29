@@ -1,7 +1,9 @@
+using System;
 using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
 using CtoxWebApp.DAL;
+using CtoxWebApp.Models.UserModel.Domain;
 using CtoxWebApp.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -88,7 +90,50 @@ namespace CtoxWebApp.Controllers
             return Content(JsonConvert.SerializeObject(result), ContentTypeJson);
         }
 
-        //TODO add change confirmed and change role
+        [HttpPut("confirmed")]
+        public async Task<IActionResult> SetConfirmed(int? id, bool? confirmed)
+        {
+            if (id is null || confirmed is null)
+            {
+                return BadRequest();
+            }
+
+            var user = context.Users.FirstOrDefault(u => u.Id == id);
+            if (user is null)
+            {
+                return NotFound();
+            }
+
+            user.Confirmed = (bool) confirmed;
+            await context.SaveChangesAsync();
+
+            return Ok();
+        }
+
+        [HttpPut("role")]
+        public async Task<IActionResult> SetRole(int? id, Role? role)
+        {
+            if (id is null || role is null)
+            {
+                return BadRequest();
+            }
+
+            if (!Enum.IsDefined(typeof(Role), role))
+            {
+                return BadRequest();
+            }
+
+            var user = context.Users.FirstOrDefault(u => u.Id == id);
+            if (user is null)
+            {
+                return NotFound();
+            }
+
+            user.Role = (Role) role;
+            await context.SaveChangesAsync();
+
+            return Ok();
+        }
 
         [HttpGet("conversions")]
         public IActionResult GetConversions(int? id)
