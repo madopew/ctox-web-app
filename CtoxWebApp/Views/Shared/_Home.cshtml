@@ -28,12 +28,6 @@
         <a asp-action="History" asp-controller="Home" class="menu-element" active-class="active">History</a>
         <a asp-action="Subscription" asp-controller="Home" class="menu-element" active-class="active">Subscription</a>
         <a asp-action="Api" asp-controller="Home" class="menu-element" active-class="active">Api</a>
-
-        @if (User.IsInRole("Admin"))
-        {
-            <a asp-action="Manage" asp-controller="Home" class="menu-element" active-class="active">Manage</a>
-        }
-
         <a asp-action="Logout" class="menu-element" asp-controller="Auth">Logout</a>
     </div>
     <div class="content">

@@ -141,6 +141,7 @@ namespace CtoxWebApp.Controllers
             return View();
         }
 
+        [Authorize(Roles = "Admin")]
         public IActionResult Manage()
         {
             return View();
