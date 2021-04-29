@@ -3,6 +3,28 @@
     Layout = "_Home";
 }
 
+<div class="manage-container">
+
+</div>
+
+<script>
+    updateTable();
+
+    function updateTable() {
+        $.ajax({
+            url: "/api/admin/users",
+            type: "GET",
+            success: function(data) {
+                console.log(data);
+            }
+        });
+    }
+</script>
+
 @section head {
+    <script
+        src="https://code.jquery.com/jquery-3.6.0.min.js"
+        integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
+        crossorigin="anonymous"></script>
     <link rel="stylesheet" href="~/css/Home/manage.css" >
 }
