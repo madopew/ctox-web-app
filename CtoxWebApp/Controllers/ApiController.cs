@@ -14,7 +14,7 @@ using Newtonsoft.Json;
 
 namespace CtoxWebApp.Controllers
 {
-    [ServiceFilter(typeof(ApiKey))]
+    [ApiKey]   
     [Route("api")]
     public class ApiController : ControllerBase
     {
