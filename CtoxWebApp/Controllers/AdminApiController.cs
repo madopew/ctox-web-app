@@ -2,6 +2,7 @@ using System;
 using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
+using CtoxWebApp.Attributes.Filters;
 using CtoxWebApp.DAL;
 using CtoxWebApp.Models.UserModel.Domain;
 using CtoxWebApp.Services.Interfaces;
@@ -11,14 +12,14 @@ using Newtonsoft.Json;
 
 namespace CtoxWebApp.Controllers
 {
-    [Authorize(Roles = "Admin")]
+    [ApiKey(Roles = "Admin")]
     [Route("/api/admin")]
-    public class AdminController : ControllerBase
+    public class AdminApiController : ControllerBase
     {
         private const string ContentTypeJson = "application/json";
         private readonly AppDbContext context;
 
-        public AdminController(AppDbContext context)
+        public AdminApiController(AppDbContext context)
         {
             this.context = context;
         }
