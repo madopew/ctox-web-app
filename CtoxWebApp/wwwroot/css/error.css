@@ -1,0 +1,56 @@
+@import url("https://fonts.googleapis.com/css2?family=Antonio:wght@100&display=swap");
+
+body {
+  height: 100vh;
+}
+
+header {
+  position: relative !important;
+}
+
+.error-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  height: 80%;
+}
+
+.error-container .left {
+  width: 50%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-end;
+  box-sizing: border-box;
+  padding-right: 2rem;
+}
+
+.error-container .left span {
+  font-size: 20rem;
+  font-family: "Antonio", sans-serif;
+  font-weight: 100;
+  color: var(--darker-light);
+}
+
+.error-container .right {
+  width: 50%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  box-sizing: border-box;
+  padding-left: 2rem;
+}
+
+.error-container .right h1 {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+    width: 80%;
+}
+
+.error-container .right span {
+    font-size: 2rem;
+    width: 80%;
+    margin-bottom: 1rem;
+}
