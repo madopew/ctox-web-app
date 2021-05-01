@@ -1,6 +1,7 @@
 using System.Threading;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace CtoxWebApp
 {
@@ -12,7 +13,8 @@ namespace CtoxWebApp
         public static void EnsureConnected<T>(this IApplicationBuilder app)
             where T : DbContext
         {
-            var context = (T) app.ApplicationServices.GetService(typeof(T));
+            using var scope = app.ApplicationServices.CreateScope();
+            var context = (T) scope.ServiceProvider.GetService(typeof(T));
 
             for (int i = 0; i < MaxRetries; i++)
             {
@@ -29,8 +31,9 @@ namespace CtoxWebApp
         public static void EnsureMigrated<T>(this IApplicationBuilder app)
             where T : DbContext
         {
-            var context = app.ApplicationServices.GetService(typeof(T));
-            ((T)context).Database.Migrate();
+            using var scope = app.ApplicationServices.CreateScope();
+            var context = (T) scope.ServiceProvider.GetService(typeof(T));
+            context.Database.Migrate();
         }
 
         private static bool IsConnected(this DbContext context)

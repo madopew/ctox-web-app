@@ -11,6 +11,8 @@ out/
 .vscode/
 ctox.exe
 docker-compose.yml
+docker-compose.dev.yml
+devsettings.json
 
 # Sensitive
 secretsettings.json

@@ -23,8 +23,9 @@ namespace CtoxWebApp
         public Startup(IConfiguration configuration)
         {
             var builder = new ConfigurationBuilder()
-                .AddEnvironmentVariables()
-                .AddConfiguration(configuration);
+                .AddConfiguration(configuration)
+                .AddJsonFile("devsettings.json")
+                .AddEnvironmentVariables();
 
             Configuration = builder.Build();
         }
