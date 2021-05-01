@@ -1,0 +1,47 @@
+@model CtoxWebApp.Models.ErrorInfo
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@Model.Title</title>
+    <link rel="stylesheet" href="~/css/style.css">
+    <link rel="stylesheet" href="~/css/landing.css">
+    <link rel="stylesheet" href="~/css/error.css">
+</head>
+
+<body>
+    <header>
+        <div class="logo">
+            <a href="/#home">
+                <span class="first">C</span><span class="second">TO</span><span class="first">X</span>
+            </a>
+        </div>
+        <div class="menu">
+            <a href="/#home">Home</a>
+            <a href="/#about">About</a>
+            <a href="/#api">Api</a>
+            <a href="/Auth/Login">Login</a>
+        </div>
+    </header>
+    <div class="error-container">
+        <div class="left">
+            <span>@Model.Code</span>
+        </div>
+        <div class="right">
+            <h1>@Model.Title</h1>
+            <span>@Model.Description</span>
+            <button class="filled" onclick='redirect("@Model.RedirectLink")'>Go back</button>
+        </div>
+        <script>
+            function redirect(lnk) {
+                window.location.href = lnk;
+            }
+        </script>
+    </div>
+</body>
+
+</html>

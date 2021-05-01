@@ -37,7 +37,7 @@ namespace CtoxWebApp.Controllers
             if (request is null
                 || string.IsNullOrWhiteSpace(request.Data))
             {
-                return BadRequest();
+                return BadRequest("Empty");
             }
 
             var api = context.Apis
@@ -138,12 +138,6 @@ namespace CtoxWebApp.Controllers
                 .FirstOrDefault(a => a.User.Username.Equals(User.Identity.Name));
 
             ViewData["api-key"] = api is null ? string.Empty : api.Key;
-            return View();
-        }
-
-        [Authorize(Roles = "Admin")]
-        public IActionResult Manage()
-        {
             return View();
         }
     }
