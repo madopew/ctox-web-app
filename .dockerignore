@@ -1,0 +1,14 @@
+ctox
+ctox.exe
+.git/
+.gitignore
+.gitattributes
+docker-compose.yml
+Dockerfile
+*.md
+.idea/
+.vs/
+.vscode/
+bin/
+obj/
+*.DotSettings.user

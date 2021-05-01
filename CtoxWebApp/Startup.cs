@@ -11,6 +11,10 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.EntityFrameworkCore;
+using System;
+using Microsoft.AspNetCore.DataProtection;
+using Microsoft.AspNetCore.DataProtection.AuthenticatedEncryption.ConfigurationModel;
+using Microsoft.AspNetCore.DataProtection.AuthenticatedEncryption;
 
 namespace CtoxWebApp
 {
@@ -19,7 +23,7 @@ namespace CtoxWebApp
         public Startup(IConfiguration configuration)
         {
             var builder = new ConfigurationBuilder()
-                .AddJsonFile("secretsettings.json")
+                .AddEnvironmentVariables()
                 .AddConfiguration(configuration);
 
             Configuration = builder.Build();
@@ -30,6 +34,14 @@ namespace CtoxWebApp
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services
+                .AddDataProtection()
+                .UseCryptographicAlgorithms(new AuthenticatedEncryptorConfiguration() 
+                {
+                    EncryptionAlgorithm = EncryptionAlgorithm.AES_256_CBC,
+                    ValidationAlgorithm = ValidationAlgorithm.HMACSHA256
+                });
+
             services.AddResponseCompression(o => o.EnableForHttps = true);
 
             services.AddTransient(p => Configuration);
@@ -58,7 +70,7 @@ namespace CtoxWebApp
                 .AddRazorRuntimeCompilation();
 
             var appContextConnection = Configuration.GetConnectionString("AppContext");
-            services.AddDbContextPool<AppDbContext>(options =>
+            services.AddDbContext<AppDbContext>(options =>
                 options
                     .UseLazyLoadingProxies()
                     .UseMySql(appContextConnection, ServerVersion.AutoDetect(appContextConnection)));
@@ -67,21 +79,17 @@ namespace CtoxWebApp
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            app.EnsureConnected<AppDbContext>();
+            app.EnsureMigrated<AppDbContext>();
+
             app.UseResponseCompression();
 
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }
-            else
-            {
-                app.UseExceptionHandler("/Error");
-                app.UseHsts();
-            }
 
             app.UseStatusCodePagesWithReExecute("/error", "?code={0}");
-
-            app.UseHttpsRedirection();
 
             app.UseDefaultFiles();
 
