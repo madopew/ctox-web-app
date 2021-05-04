@@ -12,3 +12,4 @@ Dockerfile
 bin/
 obj/
 *.DotSettings.user
+**/devsettings.json

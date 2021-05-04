@@ -11,7 +11,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.EntityFrameworkCore;
-using System;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.DataProtection.AuthenticatedEncryption.ConfigurationModel;
 using Microsoft.AspNetCore.DataProtection.AuthenticatedEncryption;
@@ -24,7 +23,7 @@ namespace CtoxWebApp
         {
             var builder = new ConfigurationBuilder()
                 .AddConfiguration(configuration)
-                .AddJsonFile("devsettings.json")
+                .AddJsonFile("devsettings.json", true)
                 .AddEnvironmentVariables();
 
             Configuration = builder.Build();
