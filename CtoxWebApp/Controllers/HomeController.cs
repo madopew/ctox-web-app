@@ -46,7 +46,7 @@ namespace CtoxWebApp.Controllers
 
             if (api is null)
             {
-                return Unauthorized();
+                return Unauthorized("No api key");
             }
 
             var result = await apiController.Parse(
@@ -106,7 +106,7 @@ namespace CtoxWebApp.Controllers
             {
                 user.Role = Role.Regular;
                 var id = User;
-                ((ClaimsIdentity) User.Identity).UpdateClaim(ClaimsIdentity.DefaultRoleClaimType, Role.Regular.ToString());
+                ((ClaimsIdentity)User.Identity).UpdateClaim(ClaimsIdentity.DefaultRoleClaimType, Role.Regular.ToString());
                 await HttpContext.SignOutAsync();
                 await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, id);
                 await context.SaveChangesAsync();
@@ -122,7 +122,7 @@ namespace CtoxWebApp.Controllers
             {
                 user.Role = Role.Super;
                 var id = User;
-                ((ClaimsIdentity) User.Identity).UpdateClaim(ClaimsIdentity.DefaultRoleClaimType, Role.Super.ToString());
+                ((ClaimsIdentity)User.Identity).UpdateClaim(ClaimsIdentity.DefaultRoleClaimType, Role.Super.ToString());
                 await HttpContext.SignOutAsync();
                 await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, id);
                 await context.SaveChangesAsync();
