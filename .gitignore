@@ -3,13 +3,17 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/master/VisualStudio.gitignore
 
-# Migrations
-Migrations/
+# Publish
+out/
 
 # Useless
 .idea/
 .vscode/
 ctox.exe
+docker-compose.yml
+docker-compose.dev.yml
+devsettings.json
+proxy.conf
 
 # Sensitive
 secretsettings.json
@@ -44,8 +48,6 @@ bld/
 
 # Visual Studio 2015/2017 cache/options directory
 .vs/
-# Uncomment if you have tasks that create the project's static files in wwwroot
-wwwroot/
 
 # Visual Studio 2017 auto generated files
 Generated\ Files/

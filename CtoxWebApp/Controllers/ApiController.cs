@@ -113,7 +113,7 @@ namespace CtoxWebApp.Controllers
 
             if (!restriction.IsAllowedSize(api, request.Data.Length))
             {
-                return StatusCode(405, "Size");
+                return StatusCode(413, "Size");
             }
 
             api.LastUsed = DateTime.Now;

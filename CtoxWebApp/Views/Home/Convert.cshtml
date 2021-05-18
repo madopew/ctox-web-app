@@ -67,6 +67,7 @@
                 editorResult.setValue(content);
             },
             error: function (data) {
+                console.log(data);
                 switch (data.status) {
                     case 400:
                         showErrorMessage("Code is empty!");
