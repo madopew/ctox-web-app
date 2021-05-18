@@ -29,11 +29,11 @@ namespace CtoxWebApp.Attributes.Filters
 
             if (!context.HttpContext.Request.Headers.ContainsKey("x-api-key"))
             {
-                context.Result = new UnauthorizedResult();
+                context.Result = new UnauthorizedObjectResult("No api key");
                 return;
             }
 
-            var dbContext = (AppDbContext) context.HttpContext.RequestServices.GetService(typeof(AppDbContext));
+            var dbContext = (AppDbContext)context.HttpContext.RequestServices.GetService(typeof(AppDbContext));
 
             var api = dbContext.Apis
                 .Include(a => a.User)
@@ -41,7 +41,7 @@ namespace CtoxWebApp.Attributes.Filters
 
             if (api is null)
             {
-                context.Result = new UnauthorizedResult();
+                context.Result = new UnauthorizedObjectResult("No api key");
                 return;
             }
 
@@ -58,7 +58,7 @@ namespace CtoxWebApp.Attributes.Filters
                 }
             }
 
-            context.Result = new UnauthorizedResult();
+            context.Result = new UnauthorizedObjectResult("No api key");
         }
 
         public void OnActionExecuted(ActionExecutedContext context)

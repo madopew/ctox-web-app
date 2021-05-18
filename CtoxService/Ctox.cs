@@ -21,15 +21,23 @@ namespace CtoxService
 
         public string Parse(string content)
         {
+            // Создание процесса, с перенаправленными стандартными потоками
             using var process = new Process();
             process.StartInfo.FileName = command;
             process.StartInfo.RedirectStandardInput = true;
             process.StartInfo.RedirectStandardOutput = true;
+
+            // Запуск процесса и запись в поток ввода
             process.Start();
             process.StandardInput.Write(content);
+
+            // Закрытие потока ввода
             process.StandardInput.Close();
+
+            // Закрытие процесса и сохранение вывода
             var result = process.StandardOutput.ReadToEnd();
             process.WaitForExit();
+
             return result;
         }
 
